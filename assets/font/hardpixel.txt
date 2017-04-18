@@ -1,0 +1,5 @@
+Author:  Jovanny Lemonad, Anton Kudin
+License: SIL OFL 1.1 (http://scripts.sil.org/OFL) or similar terms
+Source:  http://www.typetype.ru/free-fonts/
+
+Notes:   This has been converted from OTF to TTF.

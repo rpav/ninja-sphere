@@ -19,6 +19,7 @@
     ((:file "util.rpav-1")
 
      (:file "package")
+     (:file "util")
      (:file "proto")
      (:file "sprite")
      (:file "image")
@@ -26,4 +27,7 @@
      (:file "tilemap")
      (:file "anim")
 
-     (:file "assets")))))
+     (:file "assets")
+
+     (:file "startup")
+     (:file "window")))))

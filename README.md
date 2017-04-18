@@ -1,6 +1,30 @@
 # Ninja Sphere
 
-This is my in-progress entry for the [2017 Lisp Game Jam](https://itch.io/jam/lisp-game-jam-2017-easy-mode).  So far:
+This is my in-progress entry for the [2017 Lisp Game
+Jam](https://itch.io/jam/lisp-game-jam-2017-easy-mode).
+
+## Dev Log
+
+Here I'll give a brief rundown of things at various places.
+
+### Second Swipe
+
+After tilemaps/tilesets are basically functioning
+(c085f5be0328243ff1f834b7f61a89d2b58403af), getting initialization
+stuff up.  Bringing over some more stuff from prior game:
+
+  * `window.lisp`: Basic event loop etc, nothing terribly special
+  * `startup.lisp`: Bunch of static initialized stuff on load, minus a
+    bunch of the games-specific things
+  * `util.lisp`: A few things like getting time.
+
+Bunch of stuff cleaned/commented from window so it just runs, some of
+this will come back, some might not.  Main goal here is getting up and
+rendering maps ASAP.
+
+### First Take
+
+First commit. So far:
 
   * It should load without error
   * I've picked/extracted a tileset for platform tiles
