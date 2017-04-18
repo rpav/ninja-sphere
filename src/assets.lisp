@@ -4,7 +4,7 @@
   (let* ((argv0 (if build:*binary*
                     (first sb-ext:*posix-argv*)
                     (asdf:component-pathname
-                     (asdf:find-system :spell-and-dagger))))
+                     (asdf:find-system :ninja-sphere))))
          (path (merge-pathnames (string-join dirs "/") argv0)))
     (unless (probe-file path)
       (error "File not found: ~A" path))
