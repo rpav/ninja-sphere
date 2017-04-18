@@ -18,7 +18,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"maps\/tm\/goodly-1x.json"
+         "source":"tm\/goodly-1x.json"
         }],
  "tilewidth":16,
  "version":1,

@@ -10,18 +10,20 @@
   :version "0.0"
 
   :depends-on (:alexandria :defpackage-plus :sdl2kit :gamekernel)
-  :pathname "src"
   :serial t
 
   :components
-  ((:file "util.rpav-1")
+  ((:module #:src
+    :pathname "src"
+    :components
+    ((:file "util.rpav-1")
 
-   (:file "package")
-   (:file "proto")
-   (:file "sprite")
-   (:file "image")
+     (:file "package")
+     (:file "proto")
+     (:file "sprite")
+     (:file "image")
 
-   (:file "tilemap")
-   (:file "anim")
+     (:file "tilemap")
+     (:file "anim")
 
-   (:file "assets")))
+     (:file "assets")))))

@@ -4,26 +4,20 @@
 
  ;; TILE, TILESET
 
-(defclass tile ()
-  ((props :initform nil :accessor props)
-   (image :initform nil :initarg :image :reader tile-image)))
-
 (defclass tileset ()
   ((props :initform nil :accessor props)
-   (tiles :initform nil :initarg :tiles :accessor tileset-tiles)))
+   (name :initform nil :initarg :name :reader tileset-name)
+   (count :initform nil :initarg :count :reader tileset-count)
+   (tile-width :initform nil :initarg :tile-width :reader tileset-tile-width)
+   (tile-height :initform nil :initarg :tile-height :reader tilset-tileheight)))
 
-(defmethod initialize-instance :after ((tm tileset) &key (tilecount 4) props)
+(defmethod initialize-instance :after ((tm tileset) &key props)
   (with-slots (tiles (p props)) tm
-    (setf tiles (make-array tilecount :adjustable t :initial-element nil :fill-pointer 0)
-          p props)))
-
-(defun tileset-append (ts tile)
-  (with-slots (tiles) ts
-    (vector-push-extend tile tiles)))
+    (setf p props)))
 
 (defun tileset-tile (ts i)
-  (with-slots (tiles) ts
-    (aref tiles i)))
+  (with-slots (name) ts
+    (string+ name "/" (format nil "~3,'0D" i) ".png")))
 
 (defun translate-props (props)
   (mapcar
@@ -43,20 +37,12 @@
           (let* ((json:*json-identifier-name-to-lisp* #'identity)
                  (json:*identifier-name-to-key* #'tilemap-name-to-key)
                  (json (json:decode-json s))
-                 (tilecount (aval :tilecount json))
                  (ts (make-instance 'tileset
-                       :tilecount tilecount
+                       :name (aval :name json)
+                       :count (aval :tilecount json)
+                       :tile-width (aval :tilewidth json)
+                       :tile-height (aval :tileheight json)
                        :props (translate-props (aval :properites json)))))
-            (setf (fill-pointer (tileset-tiles ts)) tilecount)
-            (loop for tile in (aval :tiles json)
-                  as i = (car tile)
-                  as img = (aval :image (cdr tile))
-                  do (setf (aref (tileset-tiles ts) i)
-                           (make-instance 'tile :image img)))
-            (loop for prop in (aval :tileproperties json)
-                  as i = (car prop)
-                  do (setf (props (aref (tileset-tiles ts) i))
-                           (translate-props (cdr prop))))
             (setf (gethash (namestring path) *tileset-cache*) ts)
             ts))
         oldset)))
@@ -80,7 +66,7 @@
       (setf s (make-array len
                           :initial-contents
                           (mapcar (lambda (x)
-                                    (load-tileset (get-path "assets" "map"
+                                    (load-tileset (get-path "assets" "maps"
                                                             (aval :source x))))
                                   sets))))))
 
