@@ -1,0 +1,7 @@
+Author:  By Zack Alvarado
+License: CC-BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+Source:  https://opengameart.org/content/platformer-tilesets
+
+Notes:   The original spritesheet was cut by ImageMagick's convert,
+         frames renamed by animation sequence, and repackaged using
+         TexturePacker.

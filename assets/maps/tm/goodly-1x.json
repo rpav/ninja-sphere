@@ -1,0 +1,11 @@
+{ "columns":16,
+ "image":"..\/..\/image\/goodly-2x\/goodly-1x.png",
+ "imageheight":256,
+ "imagewidth":256,
+ "margin":0,
+ "name":"goodly-1x",
+ "spacing":0,
+ "tilecount":256,
+ "tileheight":16,
+ "tilewidth":16
+}
