@@ -1,0 +1,5 @@
+Author:  DezrasDragons
+License: CC0 (https://creativecommons.org/publicdomain/zero/1.0/)
+Source:  https://opengameart.org/content/ninja-animated
+
+Notes:   Will be repacked by TexturePacker.

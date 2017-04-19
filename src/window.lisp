@@ -3,12 +3,14 @@
 (defclass game-lists ()
   ((pass-list :initform (make-instance 'cmd-list :subsystem :config))
    (pre-list :initform (make-instance 'cmd-list :prealloc 100 :subsystem :config))
+   (bg-list :initform (make-instance 'cmd-list :prealloc 4 :subsystem :gl))
    (sprite-list :initform (make-instance 'cmd-list :prealloc 100 :subsystem :gl))
    (ui-list :initform nil)))
 
 (defun game-lists-clear (game-lists)
-  (with-slots (pre-list sprite-list ui-list) game-lists
+  (with-slots (pre-list bg-list sprite-list ui-list) game-lists
     (cmd-list-clear pre-list)
+    (cmd-list-clear bg-list)
     (cmd-list-clear sprite-list)
     (cmd-list-clear ui-list)))
 
@@ -36,12 +38,12 @@
 
 (defmethod initialize-instance :after ((win game-window) &key w h &allow-other-keys)
   (with-slots (gk screen assets render-bundle render-lists) win
-    (with-slots (pass-list pre-list sprite-list ui-list) render-lists
+    (with-slots (pass-list pre-list bg-list sprite-list ui-list) render-lists
       (setf gk (gk:create :gl3))
       (setf assets (load-assets gk))
 
       (with-game-state (win)
-        (setf screen (make-instance 'map-screen)))
+        (setf screen (make-instance 'map-screen :gk gk)))
 
       (let ((pre-pass (pass 1))
             (sprite-pass (pass 2 :asc))
@@ -51,8 +53,9 @@
         (bundle-append render-bundle
                        pass-list        ; 0
                        pre-list         ; 1
-                       sprite-list      ; 2
-                       ui-list          ; 3
+                       bg-list          ; 2
+                       sprite-list      ; 3
+                       ui-list          ; 4
                        ))
       (sdl2:gl-set-swap-interval 1)
       (setf (kit.sdl2:idle-render win) t))))

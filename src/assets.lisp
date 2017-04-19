@@ -20,10 +20,10 @@
 
 (defun load-assets (gk)
   (let ((pack (make-instance 'asset-pack)))
-    (with-slots (proj font title spritesheet anims tm) pack
+    (with-slots (proj scroll font title spritesheet anims tm) pack
       (with-bundle (b)
         (let* ((config (make-instance 'cmd-list :subsystem :config))
-               (ortho (cmd-tf-ortho proj 0 256 0 144 -10000 10000))
+               (ortho (cmd-tf-ortho proj 0 512 0 288 -10000 10000))
                #++
                (load-title (cmd-image-create (get-path "assets" "image" "title.png")
                                              :mag :nearest))

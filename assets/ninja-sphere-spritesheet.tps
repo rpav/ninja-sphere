@@ -195,134 +195,138 @@
             <key>defaultPivotPoint</key>
             <point_f>0.5,0.5</point_f>
             <key>writePivotPoints</key>
-            <false/>
+            <true/>
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">image/_STAGE/goodly-1x/000.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/001.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/002.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/003.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/004.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/005.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/006.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/007.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/009.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/016.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/017.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/018.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/019.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/020.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/021.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/022.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/024.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/025.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/026.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/027.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/028.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/029.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/030.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/032.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/033.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/034.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/035.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/036.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/037.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/038.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/040.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/041.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/042.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/043.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/044.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/045.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/048.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/049.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/050.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/051.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/052.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/053.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/054.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/056.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/057.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/058.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/059.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/061.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/064.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/065.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/066.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/070.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/072.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/073.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/074.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/080.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/081.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/082.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/083.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/084.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/085.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/086.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/088.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/089.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/090.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/091.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/092.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/093.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/094.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/096.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/097.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/098.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/099.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/100.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/101.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/102.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/104.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/105.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/106.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/107.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/108.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/109.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/110.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/112.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/113.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/114.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/115.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/116.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/117.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/118.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/120.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/121.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/122.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/123.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/125.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/137.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/145.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/146.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/147.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/148.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/152.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/153.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/154.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/155.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/156.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/157.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/158.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/161.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/162.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/163.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/164.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/168.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/169.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/170.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/171.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/172.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/173.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/174.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/184.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/185.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/186.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/187.png</key>
-            <key type="filename">image/_STAGE/goodly-1x/189.png</key>
-            <key type="filename">image/_STAGE/nosprite.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/000.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/001.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/002.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/003.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/004.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/005.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/006.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/007.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/009.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/016.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/017.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/018.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/019.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/020.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/021.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/022.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/024.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/025.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/026.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/027.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/028.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/029.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/030.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/032.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/033.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/034.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/035.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/036.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/037.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/038.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/040.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/041.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/042.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/043.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/044.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/045.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/048.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/049.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/050.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/051.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/052.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/053.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/054.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/056.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/057.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/058.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/059.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/061.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/064.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/065.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/066.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/070.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/072.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/073.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/074.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/080.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/081.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/082.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/083.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/084.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/085.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/086.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/088.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/089.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/090.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/091.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/092.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/093.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/094.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/096.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/097.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/098.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/099.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/100.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/101.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/102.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/104.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/105.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/106.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/107.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/108.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/109.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/110.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/112.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/113.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/114.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/115.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/116.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/117.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/118.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/120.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/121.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/122.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/123.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/125.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/137.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/145.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/146.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/147.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/148.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/152.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/153.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/154.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/155.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/156.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/157.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/158.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/161.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/162.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/163.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/164.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/168.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/169.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/170.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/171.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/172.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/173.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/174.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/184.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/185.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/186.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/187.png</key>
+            <key type="filename">source/_STAGE/goodly-1x/189.png</key>
+            <key type="filename">source/_STAGE/ninja-sphere/ninja-sphere_000.png</key>
+            <key type="filename">source/_STAGE/ninja-sphere/ninja-sphere_001.png</key>
+            <key type="filename">source/_STAGE/ninja-sphere/ninja-sphere_002.png</key>
+            <key type="filename">source/_STAGE/ninja-sphere/ninja-sphere_003.png</key>
+            <key type="filename">source/_STAGE/nosprite.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -335,10 +339,49 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">source/_STAGE/ninja/attack_0.png</key>
+            <key type="filename">source/_STAGE/ninja/attack_1.png</key>
+            <key type="filename">source/_STAGE/ninja/attack_2.png</key>
+            <key type="filename">source/_STAGE/ninja/idle_0.png</key>
+            <key type="filename">source/_STAGE/ninja/idle_1.png</key>
+            <key type="filename">source/_STAGE/ninja/idle_2.png</key>
+            <key type="filename">source/_STAGE/ninja/idle_3.png</key>
+            <key type="filename">source/_STAGE/ninja/jump_0.png</key>
+            <key type="filename">source/_STAGE/ninja/jump_1.png</key>
+            <key type="filename">source/_STAGE/ninja/jump_2.png</key>
+            <key type="filename">source/_STAGE/ninja/jump_3.png</key>
+            <key type="filename">source/_STAGE/ninja/run_0.png</key>
+            <key type="filename">source/_STAGE/ninja/run_1.png</key>
+            <key type="filename">source/_STAGE/ninja/run_2.png</key>
+            <key type="filename">source/_STAGE/ninja/run_3.png</key>
+            <key type="filename">source/_STAGE/ninja/run_4.png</key>
+            <key type="filename">source/_STAGE/ninja/run_5.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_0.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_1.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_2.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_3.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_4.png</key>
+            <key type="filename">source/_STAGE/ninja/swim_5.png</key>
+            <key type="filename">source/_STAGE/ninja/x_0.png</key>
+            <key type="filename">source/_STAGE/ninja/x_1.png</key>
+            <key type="filename">source/_STAGE/ninja/x_2.png</key>
+            <key type="filename">source/_STAGE/ninja/x_3.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.425,0.62069</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,7,20,15</rect>
+                <key>scale9Paddings</key>
+                <rect>10,7,20,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>image/_STAGE</filename>
+            <filename>source/_STAGE</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -7,6 +7,16 @@ Jam](https://itch.io/jam/lisp-game-jam-2017-easy-mode).
 
 Here I'll give a brief rundown of things at various places.
 
+### Graphics Finally
+
+Tweaked the `gk-tilemap` stuff, implemented a `map-screen` and the
+tilemap stuff seems to all be rendering.  This is going to use 16x16
+tiles like Spell&Dagger, but this time they're going to be smaller so we can get more on the screen.
+
+Also, scrolling and parallax for good measure.  These aren't "fully implemented" yet, but the basic spots for where numbers go are there.
+
+<img src="http://ogmo.mephle.net/ninja-sphere/parallax_small.gif">
+
 ### Second Swipe
 
 After tilemaps/tilesets are basically functioning
