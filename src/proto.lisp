@@ -2,6 +2,9 @@
 
 (defparameter *default-map* "start")
 
+(defvar *gk* nil
+  "Global GK context")
+
 (defvar *assets* nil
   "This should be set to ASSETS when any game logic stuff is called")
 

@@ -7,6 +7,14 @@ Jam](https://itch.io/jam/lisp-game-jam-2017-easy-mode).
 
 Here I'll give a brief rundown of things at various places.
 
+### First Physics
+
+OK, not much to see, but building static bodies and doing draw-debug
+for level sprites.  No real optimization here, but it should be fine
+with the very limited level size we're likely to have.
+
+<img src="http://ogmo.mephle.net/ninja-sphere/level_static.png">
+
 ### Graphics Finally
 
 Tweaked the `gk-tilemap` stuff, implemented a `map-screen` and the

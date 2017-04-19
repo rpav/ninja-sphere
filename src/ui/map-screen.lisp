@@ -7,10 +7,9 @@
    (delta :initform 1.0)
    (im :initform (make-array 4))
    (scroll-cmd :initform nil)
-   (bgscroll-cmd :initform (make-array 4))
-   (gktm :initform nil)))
+   (bgscroll-cmd :initform (make-array 4))))
 
-(defmethod initialize-instance :after ((m map-screen) &key gk &allow-other-keys)
+(defmethod initialize-instance :after ((m map-screen) &key &allow-other-keys)
   (with-slots (map im gktm scroll scroll-cmd bgscroll bgscroll-cmd) m
     (with-bundle (b)
       (let* ((list (make-instance 'cmd-list :subsystem :config))
@@ -22,7 +21,7 @@
                    (setf (aref cmds i) cmd)
                    (cmd-list-append list cmd)))
         (bundle-append b list)
-        (gk:process gk b)
+        (gk:process *gk* b)
 
         (loop for i from 0 below (length im)
               do (setf (aref im i)
@@ -40,11 +39,10 @@
                                                        :out (aref bgscroll i))))
       (setf scroll-cmd (cmd-tf-trs :prior ortho :out scroll)))
 
-    (setf map (load-tilemap (get-path "assets" "maps" "untitled.json")))
-    (setf gktm (make-instance 'gk-tilemap :tilemap map))))
+    (setf map (make-instance 'game-map :map "untitled"))))
 
 (defmethod draw ((s map-screen) lists m)
-  (with-slots (gktm im scroll scroll-cmd bgscroll bgscroll-cmd delta) s
+  (with-slots (map im scroll scroll-cmd bgscroll bgscroll-cmd delta) s
     (with-slots (pre-list) lists
       (let ((v (vx (tf-trs-translate scroll-cmd))))
         #++
@@ -62,4 +60,5 @@
 
     (loop for i from 0 below (length im)
           do (draw (aref im i) lists (aref bgscroll i)))
-    (draw gktm lists scroll)))
+
+    (draw map lists scroll)))

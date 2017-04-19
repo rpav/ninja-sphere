@@ -27,6 +27,8 @@
      (:file "tilemap")
      (:file "anim")
 
+     (:file "game-map")
+
      (:file "ui")
      (:module #:ui-classes
       :pathname "ui"

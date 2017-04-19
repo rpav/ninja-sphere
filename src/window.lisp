@@ -2,17 +2,22 @@
 
 (defclass game-lists ()
   ((pass-list :initform (make-instance 'cmd-list :subsystem :config))
+   (phys-list :initform (make-instance 'cmd-list-b2 :prealloc 16))
    (pre-list :initform (make-instance 'cmd-list :prealloc 100 :subsystem :config))
    (bg-list :initform (make-instance 'cmd-list :prealloc 4 :subsystem :gl))
    (sprite-list :initform (make-instance 'cmd-list :prealloc 100 :subsystem :gl))
-   (ui-list :initform nil)))
+   (ui-list :initform nil)
+   (phys-list-dd :initform (make-instance 'cmd-list-b2 :prealloc 2))))
 
 (defun game-lists-clear (game-lists)
-  (with-slots (pre-list bg-list sprite-list ui-list) game-lists
+  (with-slots (phys-list pre-list bg-list sprite-list ui-list phys-list-dd)
+      game-lists
+    (cmd-list-clear phys-list)
     (cmd-list-clear pre-list)
     (cmd-list-clear bg-list)
     (cmd-list-clear sprite-list)
-    (cmd-list-clear ui-list)))
+    (cmd-list-clear ui-list)
+    (cmd-list-clear phys-list-dd)))
 
 (defclass game-window (kit.sdl2:gl-window)
   (gk assets
@@ -28,7 +33,8 @@
 
 (defmacro with-game-state ((gamewin) &body body)
   (once-only (gamewin)
-    `(let ((*assets* (slot-value ,gamewin 'assets))
+    `(let ((*gk* (slot-value ,gamewin 'gk))
+           (*assets* (slot-value ,gamewin 'assets))
            (*window* ,gamewin)
            (*time* (current-time))
            (*anim-manager* (slot-value ,gamewin 'anim-manager))
@@ -38,24 +44,36 @@
 
 (defmethod initialize-instance :after ((win game-window) &key w h &allow-other-keys)
   (with-slots (gk screen assets render-bundle render-lists) win
-    (with-slots (pass-list pre-list bg-list sprite-list ui-list) render-lists
+    (with-slots (pass-list phys-list pre-list bg-list sprite-list ui-list phys-list-dd)
+        render-lists
       (setf gk (gk:create :gl3))
       (setf assets (load-assets gk))
 
       (with-game-state (win)
-        (setf screen (make-instance 'map-screen :gk gk)))
+        (setf screen (make-instance 'map-screen)))
 
-      (let ((pre-pass (pass 1))
-            (sprite-pass (pass 2 :asc))
-            (ui-pass (pass 3)))
+      (let ((phys-pass (pass 1))
+            (pre-pass (pass 2))
+            (bg-pass (pass 3))
+            (sprite-pass (pass 4 :asc))
+            (ui-pass (pass 5))
+            (phys-pass-dd (pass 6)))
         (setf ui-list (make-instance 'cmd-list-nvg :width w :height h))
-        (cmd-list-append pass-list pre-pass sprite-pass ui-pass)
+        (cmd-list-append pass-list
+                         phys-pass
+                         pre-pass
+                         bg-pass
+                         sprite-pass
+                         ui-pass
+                         phys-pass-dd)
         (bundle-append render-bundle
                        pass-list        ; 0
-                       pre-list         ; 1
-                       bg-list          ; 2
-                       sprite-list      ; 3
-                       ui-list          ; 4
+                       phys-list        ; 1
+                       pre-list         ; 2
+                       bg-list          ; 3
+                       sprite-list      ; 4
+                       ui-list          ; 5
+                       phys-list-dd     ; 6
                        ))
       (sdl2:gl-set-swap-interval 1)
       (setf (kit.sdl2:idle-render win) t))))
