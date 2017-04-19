@@ -35,15 +35,13 @@
        ,@body)))
 
 (defmethod initialize-instance :after ((win game-window) &key w h &allow-other-keys)
-  (with-slots (gk assets render-bundle render-lists) win
+  (with-slots (gk screen assets render-bundle render-lists) win
     (with-slots (pass-list pre-list sprite-list ui-list) render-lists
       (setf gk (gk:create :gl3))
       (setf assets (load-assets gk))
 
-      #++
       (with-game-state (win)
-        (let ((phase (make-instance 'title-phase)))
-          (ps-push phase)))
+        (setf screen (make-instance 'map-screen)))
 
       (let ((pre-pass (pass 1))
             (sprite-pass (pass 2 :asc))
@@ -60,7 +58,6 @@
       (setf (kit.sdl2:idle-render win) t))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))
-  #++
   (with-slots (gk) w
     (gk:destroy gk)))
 
@@ -78,7 +75,7 @@
 (defgeneric key-event (ob key state) (:method (ob key state)))
 
 (defmethod kit.sdl2:keyboard-event ((window game-window) state ts repeat-p keysym)
-  (progn ;with-game-state (window)
+  (with-game-state (window)
     (let ((scancode (sdl2:scancode keysym)))
       (when (or (eq :scancode-escape scancode))
         (if build:*binary*

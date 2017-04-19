@@ -322,6 +322,7 @@
             <key type="filename">image/_STAGE/goodly-1x/186.png</key>
             <key type="filename">image/_STAGE/goodly-1x/187.png</key>
             <key type="filename">image/_STAGE/goodly-1x/189.png</key>
+            <key type="filename">image/_STAGE/nosprite.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -337,7 +338,7 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>image/_STAGE/goodly-1x</filename>
+            <filename>image/_STAGE</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
