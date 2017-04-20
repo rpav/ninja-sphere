@@ -21,12 +21,14 @@
      (:file "package")
      (:file "util")
      (:file "proto")
+     (:file "startup")
+
      (:file "sprite")
      (:file "image")
-
      (:file "tilemap")
      (:file "anim")
 
+     (:file "game-char")
      (:file "game-map")
 
      (:file "ui")
@@ -36,6 +38,4 @@
       ((:file "map-screen")))
 
      (:file "assets")
-
-     (:file "startup")
      (:file "window")))))

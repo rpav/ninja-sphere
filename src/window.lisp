@@ -27,7 +27,7 @@
    (game-state :initform (make-hash-table))
    (anim-manager :initform (make-instance 'anim-manager))
    (screen :initform nil :accessor game-window-screen)
-   #++(phase-stack :initform (make-instance 'phase-stack))
+   (physics-bundle :initform (make-instance 'bundle))
    (render-bundle :initform (make-instance 'bundle))
    (render-lists :initform (make-instance 'game-lists))))
 
@@ -38,12 +38,11 @@
            (*window* ,gamewin)
            (*time* (current-time))
            (*anim-manager* (slot-value ,gamewin 'anim-manager))
-           (*scale* (/ (kit.sdl2:window-width ,gamewin) 256.0))
-           #++(*ps* (slot-value ,gamewin 'phase-stack)))
+           (*scale* (/ (kit.sdl2:window-width ,gamewin) 256.0)))
        ,@body)))
 
 (defmethod initialize-instance :after ((win game-window) &key w h &allow-other-keys)
-  (with-slots (gk screen assets render-bundle render-lists) win
+  (with-slots (gk screen assets physics-bundle render-bundle render-lists) win
     (with-slots (pass-list phys-list pre-list bg-list sprite-list ui-list phys-list-dd)
         render-lists
       (setf gk (gk:create :gl3))
@@ -52,28 +51,27 @@
       (with-game-state (win)
         (setf screen (make-instance 'map-screen)))
 
-      (let ((phys-pass (pass 1))
-            (pre-pass (pass 2))
-            (bg-pass (pass 3))
-            (sprite-pass (pass 4 :asc))
-            (ui-pass (pass 5))
-            (phys-pass-dd (pass 6)))
+      (let ((pre-pass (pass 1))
+            (bg-pass (pass 2))
+            (sprite-pass (pass 3 :asc))
+            (ui-pass (pass 4))
+            (phys-pass-dd (pass 5)))
         (setf ui-list (make-instance 'cmd-list-nvg :width w :height h))
         (cmd-list-append pass-list
-                         phys-pass
                          pre-pass
                          bg-pass
                          sprite-pass
                          ui-pass
                          phys-pass-dd)
+        (bundle-append physics-bundle
+                       phys-list)
         (bundle-append render-bundle
                        pass-list        ; 0
-                       phys-list        ; 1
-                       pre-list         ; 2
-                       bg-list          ; 3
-                       sprite-list      ; 4
-                       ui-list          ; 5
-                       phys-list-dd     ; 6
+                       pre-list         ; 1
+                       bg-list          ; 2
+                       sprite-list      ; 3
+                       ui-list          ; 4
+                       phys-list-dd     ; 5
                        ))
       (sdl2:gl-set-swap-interval 1)
       (setf (kit.sdl2:idle-render win) t))))
@@ -85,10 +83,14 @@
 (defmethod kit.sdl2:render ((w game-window))
   (gl:clear-color 0.0 0.0 0.0 1.0)
   (gl:clear :color-buffer-bit :stencil-buffer-bit)
-  (with-slots (gk assets render-bundle render-lists) w
+  (with-slots (gk assets physics-bundle render-bundle render-lists) w
     (game-lists-clear render-lists)
     (with-game-state (w)
       (when-let (screen (current-screen))
+        (physics screen render-lists)
+        (gk:process gk physics-bundle)
+        (post-physics screen render-lists)
+
         (anim-update *anim-manager*)
         (draw screen render-lists (asset-proj *assets*))
         (gk:process gk render-bundle)))))
@@ -104,7 +106,6 @@
               (kit.sdl2:close-window window)
               (kit.sdl2:quit))
             (kit.sdl2:close-window window)))
-      #++
       (unless repeat-p
         (when-let (screen (current-screen))
           (key-event screen scancode state))))))

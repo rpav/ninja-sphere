@@ -26,5 +26,27 @@
 (defvar *anim-manager* nil
   "The animation manager")
 
+(progn
+  (defparameter *physics-scale* 64.0)
+  (defparameter *f* (/ 16.0 *physics-scale*)))
+
+(defgeneric physics (thing lists)
+  (:documentation "Do physics for THING")
+  (:method (thing lists)))
+
+(defgeneric post-physics (thing lists)
+  (:documentation "Do stuff after physics is processed")
+  (:method (thing lists)))
+
 (defgeneric draw (thing lists matrix)
   (:documentation "Draw `THING` given `LISTS` and prior transformation `MATRIX`"))
+
+(defgeneric collide (a b id-a id-b)
+  (:documentation "Called when A collides with B.  Some things may reverse
+this and call COLLIDE again with (B A). ID-A and ID-B are fixture IDs.")
+  (:method (a b id-a id-b)))
+
+(defgeneric separate (a b id-a id-b)
+  (:documentation "Called when A separates from B.  Some things may reverse
+this and call SEPARATE again with (B A). ID-A and ID-B are fixture IDs.")
+  (:method (a b id-a id-b)))
