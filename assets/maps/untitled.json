@@ -71,6 +71,30 @@
          "y":0
         }, 
         {
+         "draworder":"topdown",
+         "height":18,
+         "name":"Mobs",
+         "objects":[
+                {
+                 "gid":267,
+                 "height":16,
+                 "id":8,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":20,
+                 "x":192,
+                 "y":208
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":64,
+         "x":0,
+         "y":0
+        }, 
+        {
          "color":"#ff0000",
          "draworder":"topdown",
          "height":18,
@@ -105,7 +129,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":6,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"right-up",
  "tileheight":16,
@@ -113,6 +137,10 @@
         {
          "firstgid":1,
          "source":"tm\/goodly-1x.json"
+        }, 
+        {
+         "firstgid":257,
+         "source":"tm\/mc.json"
         }],
  "tilewidth":16,
  "version":1,

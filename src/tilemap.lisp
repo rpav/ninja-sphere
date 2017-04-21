@@ -8,16 +8,28 @@
   ((props :initform nil :accessor props)
    (name :initform nil :initarg :name :reader tileset-name)
    (count :initform nil :initarg :count :reader tileset-count)
+   (tile-names :initform nil :reader tileset-names)
    (tile-width :initform nil :initarg :tile-width :reader tileset-tile-width)
    (tile-height :initform nil :initarg :tile-height :reader tilset-tileheight)))
 
-(defmethod initialize-instance :after ((tm tileset) &key props)
-  (with-slots (tiles (p props)) tm
-    (setf p props)))
+(defmethod initialize-instance :after ((tm tileset) &key props tiles)
+  (with-slots (name count tile-names (p props)) tm
+    (setf p props)
+    (setf tile-names (make-array count))
+
+    (if tiles
+        (loop for tile in tiles
+            as i = (car tile)
+            as img = (pathname (aval :image (cdr tile)))
+            do (setf (aref tile-names i)
+                     (string+ name "/" (pathname-name img) "." (pathname-type img))))
+        (loop for i from 0 below count
+              do (setf (aref tile-names i)
+                       (string+ name "/" (format nil "~3,'0D" i) ".png"))))))
 
 (defun tileset-tile (ts i)
-  (with-slots (name) ts
-    (string+ name "/" (format nil "~3,'0D" i) ".png")))
+  (with-slots (tile-names) ts
+    (aref tile-names i)))
 
 (defun translate-props (props)
   (mapcar
@@ -40,6 +52,7 @@
                  (ts (make-instance 'tileset
                        :name (aval :name json)
                        :count (aval :tilecount json)
+                       :tiles (unless (aval :image json) (aval :tiles json))
                        :tile-width (aval :tilewidth json)
                        :tile-height (aval :tileheight json)
                        :props (translate-props (aval :properites json)))))

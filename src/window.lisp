@@ -111,7 +111,7 @@
         (when-let (screen (current-screen))
           (key-event screen scancode state))))))
 
-(define-start-function run (&key (w 1280) (h 720))
+(define-start-function run (&key (w 1536) (h 864))
   (static-startup)
   (sdl2:gl-set-attr :context-major-version 3)
   (sdl2:gl-set-attr :context-minor-version 3)
