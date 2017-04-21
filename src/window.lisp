@@ -36,6 +36,7 @@
     `(let ((*gk* (slot-value ,gamewin 'gk))
            (*assets* (slot-value ,gamewin 'assets))
            (*window* ,gamewin)
+           (*lists* (slot-value ,gamewin 'render-lists))
            (*time* (current-time))
            (*anim-manager* (slot-value ,gamewin 'anim-manager))
            (*scale* (/ (kit.sdl2:window-width ,gamewin) 256.0)))
@@ -47,9 +48,6 @@
         render-lists
       (setf gk (gk:create :gl3))
       (setf assets (load-assets gk))
-
-      (with-game-state (win)
-        (setf screen (make-instance 'map-screen)))
 
       (let ((pre-pass (pass 1))
             (bg-pass (pass 2))
@@ -74,7 +72,10 @@
                        phys-list-dd     ; 5
                        ))
       (sdl2:gl-set-swap-interval 1)
-      (setf (kit.sdl2:idle-render win) t))))
+      (setf (kit.sdl2:idle-render win) t)
+
+      (with-game-state (win)
+        (setf screen (make-instance 'map-screen))))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))
   (with-slots (gk) w

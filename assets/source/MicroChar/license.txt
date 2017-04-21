@@ -1,0 +1,5 @@
+Author:  ThKaspar
+License: OGA-BY 3.0 (http://static.opengameart.org/OGA-BY-3.0.txt)
+Source:  https://opengameart.org/content/micro-character-bases-basics
+
+Notes:   Sliced some of these in GIMP first.

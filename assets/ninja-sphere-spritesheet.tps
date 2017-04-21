@@ -339,6 +339,33 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">source/_STAGE/mc/orc_death_0.png</key>
+            <key type="filename">source/_STAGE/mc/orc_hit_0.png</key>
+            <key type="filename">source/_STAGE/mc/orc_hit_1.png</key>
+            <key type="filename">source/_STAGE/mc/orc_hit_2.png</key>
+            <key type="filename">source/_STAGE/mc/orc_idle_0.png</key>
+            <key type="filename">source/_STAGE/mc/orc_idle_1.png</key>
+            <key type="filename">source/_STAGE/mc/orc_walk_0.png</key>
+            <key type="filename">source/_STAGE/mc/orc_walk_1.png</key>
+            <key type="filename">source/_STAGE/mc/orc_walk_2.png</key>
+            <key type="filename">source/_STAGE/mc/pig_death_0.png</key>
+            <key type="filename">source/_STAGE/mc/pig_idle_0.png</key>
+            <key type="filename">source/_STAGE/mc/pig_idle_1.png</key>
+            <key type="filename">source/_STAGE/mc/pig_walk_0.png</key>
+            <key type="filename">source/_STAGE/mc/pig_walk_1.png</key>
+            <key type="filename">source/_STAGE/mc/pig_walk_2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>5,4,10,8</rect>
+                <key>scale9Paddings</key>
+                <rect>5,4,10,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">source/_STAGE/ninja/attack_0.png</key>
             <key type="filename">source/_STAGE/ninja/attack_1.png</key>
             <key type="filename">source/_STAGE/ninja/attack_2.png</key>

@@ -22,8 +22,10 @@
   (let ((pack (make-instance 'asset-pack)))
     (with-slots (proj scroll font title spritesheet anims tm) pack
       (with-bundle (b)
-        (let* ((config (make-instance 'cmd-list :subsystem :config))
-               (ortho (cmd-tf-ortho proj 0 512 0 288 -10000 10000))
+        (let* ((tmp (gk-mat4))
+               (config (make-instance 'cmd-list :subsystem :config))
+               (ortho (cmd-tf-ortho tmp 0 512 0 288 -10000 10000))
+               (shift (cmd-tf-trs :prior tmp :out proj :translate (gk-vec2 8 8)))
                #++
                (load-title (cmd-image-create (get-path "assets" "image" "title.png")
                                              :mag :nearest))
@@ -34,7 +36,7 @@
                (load-font (cmd-font-create
                            "hardpixel"
                            (get-path "assets" "font" "hardpixel.ttf"))))
-          (cmd-list-append config ortho #++ load-title load-sprites load-font)
+          (cmd-list-append config ortho shift #++ load-title load-sprites load-font)
           (bundle-append b config)
           (gk:process gk b)
 

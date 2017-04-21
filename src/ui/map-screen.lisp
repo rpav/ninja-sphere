@@ -4,6 +4,7 @@
   ((map :initform nil)
    (go :initform nil)
    (char :initform nil)
+   (charpos :initform (gk-vec2 0 0))
    (scroll :initform (gk-mat4))
    (bgscroll :initform (make-array 4))
    (delta :initform 1.0)
@@ -40,7 +41,9 @@
             do (setf (aref bgscroll i) (gk-mat4)
                      (aref bgscroll-cmd i) (cmd-tf-trs :prior ortho
                                                        :out (aref bgscroll i))))
-      (setf scroll-cmd (cmd-tf-trs :prior ortho :out scroll)))
+      (setf scroll-cmd (cmd-tf-trs :prior ortho
+                                   :translate (gk-vec2 0 0)
+                                   :out scroll)))
 
     (setf map (make-instance 'game-map :map "untitled"))
     (setf char (game-map-char map))))
@@ -56,21 +59,29 @@
       (post-physics map lists))))
 
 (defmethod draw ((s map-screen) lists m)
-  (with-slots (map im scroll scroll-cmd bgscroll bgscroll-cmd delta) s
-    (with-slots (pre-list) lists
-      (let ((v (vx (tf-trs-translate scroll-cmd))))
-        #++
-        (if (and (> delta 0) (>= v 128))
-            (setf delta -1.0)
-            (if (and (< delta 0.0) (<= v -128))
-                (setf delta 1.0))))
-      #++
-      (incf (vx (tf-trs-translate scroll-cmd)) delta)
-      (cmd-list-append pre-list scroll-cmd)
+  (with-slots (map im scroll scroll-cmd
+               bgscroll bgscroll-cmd delta) s
+    (with-slots (game-char) map
+      (let ((charpos (game-char-pos game-char))
+            (mapsize (game-map-size map)))
 
-      (loop for i from 0 below (length bgscroll-cmd)
-            do (setf (vx (tf-trs-translate (aref bgscroll-cmd i))) (* 0.1 (1+ i) 0))
-               (cmd-list-append pre-list (aref bgscroll-cmd i))))
+        (with-slots (pre-list) lists
+          (let* ((v (abs (vx (tf-trs-translate scroll-cmd))))
+                 (screen-x (+ (abs v) 512))
+                 (cx (- screen-x (vx charpos)))
+                 (margin 384))
+
+            (when (< cx margin)
+              (incf (vx (tf-trs-translate scroll-cmd)) (- cx margin))
+              (setf (vx (tf-trs-translate scroll-cmd))
+                    (clamp (vx (tf-trs-translate scroll-cmd)) (+ 512.0 (- (* 16.0 (vx mapsize)))) 0))
+              (map-scroll map (abs (vx (tf-trs-translate scroll-cmd)))))
+
+            (cmd-list-append pre-list scroll-cmd)
+
+            (loop for i from 0 below (length bgscroll-cmd)
+                  do (setf (vx (tf-trs-translate (aref bgscroll-cmd i))) (* 0.1 (1+ i) 0))
+                     (cmd-list-append pre-list (aref bgscroll-cmd i)))))))
 
     (loop for i from 0 below (length im)
           do (draw (aref im i) lists (aref bgscroll i)))
@@ -94,5 +105,5 @@
                 (:scancode-left (clear-motion-bit char +motion-left+))
                 (:scancode-up (clear-motion-bit char +motion-up+))
                 (:scancode-down (char-action char :stand)))))
-        (when (and (eq state :keydown) (eql key :scancode-space))
+        (when (and (eq state :keydown) (eql key :scancode-z))
           (setf go t)))))

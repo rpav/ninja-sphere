@@ -17,6 +17,9 @@
 (defvar *window* nil
   "The current game-window")
 
+(defvar *lists* nil
+  "The render/physics lists")
+
 (defvar *scale* nil
   "'Virtual resolution' scale; this represents 1px scaled.")
 
@@ -29,6 +32,9 @@
 (progn
   (defparameter *physics-scale* 64.0)
   (defparameter *f* (/ 16.0 *physics-scale*)))
+
+(defun f* (&rest factors)
+  (apply '* *f* factors))
 
 (defgeneric physics (thing lists)
   (:documentation "Do physics for THING")

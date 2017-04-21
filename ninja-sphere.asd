@@ -29,6 +29,8 @@
      (:file "anim")
 
      (:file "game-char")
+     (:file "game-mob")
+     (:file "game-item")
      (:file "game-map")
 
      (:file "ui")

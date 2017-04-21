@@ -2,10 +2,10 @@
 
 (defclass game-char ()
   ((jump-force :initform nil)
-   (move-force :initform nil)
    (set-move :initform nil)
    (body :initform nil)
-   (pos :initform (gk-vec2 0 0))
+   (pos :initform nil)
+   (pos16 :initform (gk-vec2 0 0))
 
    (state :initform nil)
    (actions :initform nil)
@@ -18,12 +18,11 @@
    (motion :initform +motion-none+)
    (motion-mask :initform 0)))
 
-(defmethod initialize-instance :after ((c game-char) &key world &allow-other-keys)
+(defmethod initialize-instance :after ((c game-char) &key world start &allow-other-keys)
   (with-slots (sprite sprite-anims
-               jump-force move-force set-move body pos fix-update) c
+               jump-force set-move body pos fix-update) c
     (setf body (make-b2-body c))
 
-    (setf move-force (cmd-b2-force body (gk-vec2 0 0) (gk-vec2 0 0)))
     (setf jump-force (cmd-b2-linear-impulse body (gk-vec2 0 0.0) (gk-vec2 *f* 0)))
     (setf set-move (cmd-b2-set-velocity body (gk-vec2 0 0) 0))
 
@@ -51,12 +50,13 @@
 
     (sprite-anim-set-play sprite-anims :idle)
 
-    (setf (b2-body-position body) pos)
+    (setf (b2-body-position body) start
+          pos start)
 
     (let* ((bundle (make-instance 'bundle))
            (list (make-instance 'cmd-list-b2))
            (bodydef (b2-bodydef body :dynamic
-                                :position (gk-vec2 1.0 3.0)
+                                :position (gk-vec2 (f* (vx start)) (f* (vy start)))
                                 :fixed-rotation-p t))
            (body-create (cmd-b2-body-create world bodydef))
 
@@ -107,6 +107,11 @@
       ((> (aref collide-count 2) 0) :left)
       ((> (aref collide-count 3) 0) :right))))
 
+(defun crushed-p (gc)
+  (with-slots (collide-count) gc
+    (and (> (aref collide-count 2) 0)
+         (> (aref collide-count 3) 0))))
+
 (defmethod char-action ((gc game-char) action)
   (with-slots (actions) gc
     (push action actions)))
@@ -136,8 +141,10 @@
 (defmethod change-state ((o game-char) (s (eql :bounce)) from-state)
   (with-slots (jump-force) o
     (let ((side (side-hit o)))
-      (setf (vy (b2-linear-impulse jump-force)) 2.0
-            (vx (b2-linear-impulse jump-force)) (if (eql side :left) -1.5 1.5)))))
+      (setf (vy (b2-linear-impulse jump-force)) 2.2
+            (vx (b2-linear-impulse jump-force)) (if (eql side :left) -1.7 1.7)))))
+
+(defmethod change-state ((o game-char) (s (eql :bounce-fall)) from-state))
 
 (defmethod change-state ((o game-char) (s (eql :attack)) from-state)
   (with-slots (sprite-anims set-move) o
@@ -221,8 +228,18 @@
 
 
 (defmethod run-state ((o game-char) (s (eql :bounce)))
-  (if (action-is o :stand)
-      (setf (state o) :falling)))
+  (cond
+    ((action-is o :stand)
+     (setf (state o) :falling))
+    ((not (side-hit o))
+     (setf (state o) :bounce-fall))))
+
+(defmethod run-state ((o game-char) (s (eql :bounce-fall)))
+  (cond
+    ((action-is o :stand)
+     (setf (state o) :falling))
+    ((side-hit o)
+     (setf (state o) :bounce))))
 
 
 ;;; FIXME: Pretty inefficient but we should only have a couple actions per frame
@@ -233,7 +250,7 @@
                (return found)))))
 
 (defmethod physics ((gc game-char) lists)
-  (with-slots (jump-force move-force body set-move
+  (with-slots (jump-force body set-move
                actions fix-update) gc
     (setf (b2-velocity-linear set-move) (b2-body-velocity body))
     (do-state gc)
@@ -244,7 +261,8 @@
       (cmd-list-append phys-list jump-force))))
 
 (defmethod post-physics ((gc game-char) lists)
-  (with-slots (collide-count) gc)
+  (when (crushed-p gc)
+    (:say "CRUSHED!"))
   (with-slots (jump-force) gc
     (setf (vx (b2-linear-impulse jump-force)) 0.0
           (vy (b2-linear-impulse jump-force)) 0.0))
@@ -279,7 +297,12 @@
     (game-char-update-motion e)))
 
 (defun game-char-update-motion (e)
-  (with-slots (motion-mask motion move-force set-move) e
+  (with-slots (motion-mask motion set-move) e
     (setf motion (or (akey motion-mask +motion-mask+)
                      +motion-none+))))
 
+(defun game-char-pos (c)
+  (with-slots (pos pos16) c
+    (set-vec2 pos16 pos)
+    (nv2* pos16 *physics-scale*)
+    pos16))

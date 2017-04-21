@@ -114,6 +114,8 @@
           do (setf (aval :y object) (- (* 16 (vy size))
                                        (+ (aval :height object)
                                           (aval :y object))))
+             (when (aval :gid object)
+               (setf (aval :gid object) (1- (aval :gid object))))
              (when-let (name (aval :name object))
                (setf (gethash name names) object)))
     (setf (slot-value layer 'objects) objects)
