@@ -21,6 +21,12 @@
                           :translate pos
                           :scale size))))
 
+(defun sprite-scale (s)
+  (tf-trs-scale (slot-value s 'trs)))
+
+(defun (setf sprite-scale) (v s)
+  (setf (tf-trs-scale (slot-value s 'trs)) v))
+
 (defun sprite-pos (s)
   (tf-trs-translate (slot-value s 'trs)))
 
@@ -105,3 +111,41 @@
         (or (gethash sheet name)
             (error "Can't find animation: ~S" name))
       (length indexes))))
+
+ ;; Sprite Anim Set
+
+;;; This organizes a number of animations, states, etc
+(defclass sprite-anim-set ()
+  ((anims :initform nil)
+   (states :initform nil)
+   (index :initform (make-hash-table))
+   (current :initform nil)))
+
+(defmethod initialize-instance :after ((s sprite-anim-set) &key animation-list sprite &allow-other-keys)
+  (with-slots (anims states index) s
+    (let ((len (length animation-list)))
+      (setf anims (make-array len))
+      (setf states (make-array len))
+
+      (loop for a in animation-list
+            for i from 0
+            do (destructuring-bind (key name &key count on-stop (frame-length (/ 180.0 1000))) a
+                 (setf (aref anims i) (make-instance 'anim-sprite
+                                        :frame-length frame-length
+                                        :name name
+                                        :count count)
+                       (aref states i) (animation-instance (aref anims i) sprite :on-stop on-stop)
+                       (gethash key index) i))))))
+
+(defun sprite-anim-set-play (s key)
+  (with-slots (states index current) s
+    (let ((anim (aref states (gethash key index))))
+      (unless (eq anim current)
+       (when current
+         (anim-stop *anim-manager* current))
+       (anim-play *anim-manager* anim)
+       (setf current anim)))))
+
+(defun sprite-anim-set-state (s key)
+  (with-slots (states index) s
+      (aref states (gethash key index))))

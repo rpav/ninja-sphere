@@ -219,7 +219,7 @@
                   (when tile
                     (let ((sprite (make-instance 'sprite
                                     :sheet sheet
-                                    :key key
+                                    :key i
                                     :name tile
                                     :pos (gk-vec3 (* 16 x) (* 16 y) 0))))
                       (vector-push-extend sprite sprites))))

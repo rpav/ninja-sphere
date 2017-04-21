@@ -13,13 +13,13 @@
    (fix-update :initform nil)
 
    (sprite :initform nil)
-   (ballsprite :initform nil)
+   sprite-anims
 
    (motion :initform +motion-none+)
    (motion-mask :initform 0)))
 
 (defmethod initialize-instance :after ((c game-char) &key world &allow-other-keys)
-  (with-slots (sprite ballsprite
+  (with-slots (sprite sprite-anims
                jump-force move-force set-move body pos fix-update) c
     (setf body (make-b2-body c))
 
@@ -33,50 +33,69 @@
                    :sheet (asset-sheet *assets*)
                    :name "ninja/idle_1.png"
                    :pos (gk-vec2 16 16)
-                   :key 50))
-    (setf ballsprite (make-instance 'sprite
-                       :sheet (asset-sheet *assets*)
-                       :name "ninja-sphere/ninja-sphere_001.png"
-                       :pos (gk-vec2 16 16)
-                       :key 50))
+                   :size (gk-vec2 1.0 1.0)))
+
+    (setf sprite-anims
+          (make-instance 'sprite-anim-set
+            :sprite sprite
+            :animation-list
+            (list
+             (list :idle "ninja/idle")
+             (list :walk "ninja/run")
+             (list :attack "ninja/attack"
+                   :count 1
+                   :frame-length (/ 64.0 1000)
+                   :on-stop (lambda (s)
+                              (on-stop c :attack s)))
+             (list :ball "ninja-sphere/ninja-sphere"))))
+
+    (sprite-anim-set-play sprite-anims :idle)
 
     (setf (b2-body-position body) pos)
 
     (let* ((bundle (make-instance 'bundle))
            (list (make-instance 'cmd-list-b2))
            (bodydef (b2-bodydef body :dynamic
-                                :position (gk-vec2 1.0 3.0) :fixed-rotation-p t))
+                                :position (gk-vec2 1.0 3.0)
+                                :fixed-rotation-p t))
            (body-create (cmd-b2-body-create world bodydef))
 
-           (x 0.0 #++(* *f* 1.0))
-           (y 0.0 #++(* *f* 3.0))
+           (x 0.0)
+           (y 0.0)
            (r (* *f* 0.3))
            (tr (* *f* 0.1))
-           (fixture-create (cmd-b2-fixture-create body
-                                                  (list
-                                                   :begin
-                                                   :circle x y r
-                                                   :friction 0.0
-                                                   :fill
+           (fixture-create
+             (cmd-b2-fixture-create
+              body
+              (list
+               :begin
+               :circle x y r
+               :friction 0.0
+               :fill
 
-                                                   :begin
-                                                   :circle x (- y r) tr
-                                                   :sensor
-                                                   :fixture-id 1.0
-                                                   :fill
+               :begin
+               :circle x (- y r) tr
+               :sensor
+               :fixture-id 1.0
+               :fill
 
-                                                   :begin
-                                                   :circle (- x r) y tr
-                                                   :sensor :fixture-id 2.0
-                                                   :fill
+               :begin
+               :circle (- x r) y tr
+               :sensor :fixture-id 2.0
+               :fill
 
-                                                   :begin
-                                                   :circle (+ x r) y tr
-                                                   :sensor :fixture-id 3.0
-                                                   :fill))))
+               :begin
+               :circle (+ x r) y tr
+               :sensor :fixture-id 3.0
+               :fill))))
       (bundle-append bundle list)
       (cmd-list-append list body-create fixture-create)
       (gk:process *gk* bundle))))
+
+(defgeneric on-stop (o key state))
+
+(defmethod on-stop ((o game-char) (key (eql :attack)) s)
+  (setf (state o) :falling))
 
 (defmethod on-ground-p ((gc game-char))
   (with-slots (collide-count) gc
@@ -88,22 +107,30 @@
       ((> (aref collide-count 2) 0) :left)
       ((> (aref collide-count 3) 0) :right))))
 
-(defmethod char-jump ((gc game-char))
+(defmethod char-action ((gc game-char) action)
   (with-slots (actions) gc
-    (push :jump actions)))
+    (push action actions)))
 
-(defmethod change-state ((o game-char) (s (eql :walking)) from-state))
+(defmethod change-state ((o game-char) (s (eql :walking)) from-state)
+  (with-slots (sprite-anims) o
+    (sprite-anim-set-play sprite-anims :idle)))
+
 (defmethod change-state ((o game-char) (s (eql :jumping)) (from-state (eql :walking)))
   (with-slots (jump-force) o
     (setf (vy (b2-linear-impulse jump-force)) 4.0)))
-(defmethod change-state ((o game-char) (s (eql :falling)) from-state))
+
+(defmethod change-state ((o game-char) (s (eql :falling)) from-state)
+  (with-slots (sprite-anims) o
+    (sprite-anim-set-play sprite-anims :idle)))
 
 (defmethod change-state ((o game-char) (s (eql :ball)) from-state)
-  (with-slots (fix-update) o
-    (setf (b2-fixture-update-elasticity fix-update) 0.9)))
+  (with-slots (fix-update sprite-anims sprite) o
+    (setf (sprite-scale sprite) (gk-vec3 1.0 1.0 1.0))
+    (setf (b2-fixture-update-elasticity fix-update) 0.9)
+    (sprite-anim-set-play sprite-anims :ball)))
 
 (defmethod change-state :before ((o game-char) to-state (from-state (eql :ball)))
-  (with-slots (fix-update) o
+  (with-slots (fix-update sprite-anims) o
     (setf (b2-fixture-update-elasticity fix-update) 0.0)))
 
 (defmethod change-state ((o game-char) (s (eql :bounce)) from-state)
@@ -112,6 +139,11 @@
       (setf (vy (b2-linear-impulse jump-force)) 2.0
             (vx (b2-linear-impulse jump-force)) (if (eql side :left) -1.5 1.5)))))
 
+(defmethod change-state ((o game-char) (s (eql :attack)) from-state)
+  (with-slots (sprite-anims set-move) o
+    (sprite-anim-set-play sprite-anims :attack)
+    (when (eql from-state :walking)
+      (setf (vx (b2-velocity-linear set-move)) 0.0))))
 
 (defmethod run-state ((o game-char) (s null))
   (if (on-ground-p o)
@@ -119,7 +151,7 @@
       (setf (state o) :falling)))
 
 (defmethod run-state ((o game-char) (s (eql :falling)))
-  (with-slots (body motion set-move) o
+  (with-slots (body motion set-move sprite) o
     (if (zerop (vx motion))
         (if (plusp (vx (b2-velocity-linear set-move)))
             (incf (vx (b2-velocity-linear set-move)) -0.1)
@@ -127,24 +159,42 @@
         (setf (vx (b2-velocity-linear set-move))
               (clamp (+ (vx (b2-velocity-linear set-move))
                         (* 0.7 (vx motion)))
-                     -1.5 1.5))))
+                     -1.5 1.5)))
 
-  (when (on-ground-p o)
-    (setf (state o) :walking))
-  (when (action-is o :ball)
-    (setf (state o) :ball)))
+    (let ((v (vx (b2-velocity-linear set-move))))
+      (if (< v -0.1) (setf (sprite-scale sprite) (gk-vec3 -1.0 1.0 1.0)))
+      (if (> v  0.1) (setf (sprite-scale sprite) (gk-vec3  1.0 1.0 1.0)))))
+
+  (cond
+    ((on-ground-p o)
+     (setf (state o) :walking))
+    ((action-is o :attack)
+     (setf (state o) :attack))
+    ((action-is o :ball)
+     (setf (state o) :ball))))
 
 (defmethod run-state ((o game-char) (s (eql :walking)))
-  (with-slots (motion set-move) o
+  (with-slots (motion set-move sprite sprite-anims) o
     (setf (b2-velocity-linear set-move) motion)
-    (nv2* (b2-velocity-linear set-move) 1.5))
+    (nv2* (b2-velocity-linear set-move) 1.5)
 
-  (when (action-is o :jump)
-    (setf (state o) :jumping))
-  (when (not (on-ground-p o))
-    (setf (state o) :falling))
-  (when (action-is o :ball)
-    (setf (state o) :ball)))
+    (let ((v (vx (b2-velocity-linear set-move))))
+      (if (< v -0.1) (setf (sprite-scale sprite) (gk-vec3 -1.0 1.0 1.0)))
+      (if (> v  0.1) (setf (sprite-scale sprite) (gk-vec3 1.0 1.0 1.0)))
+
+      (if (> (abs v) 0.1)
+          (sprite-anim-set-play sprite-anims :walk)
+          (sprite-anim-set-play sprite-anims :idle))))
+
+  (cond
+    ((action-is o :attack)
+     (setf (state o) :attack))
+    ((action-is o :jump)
+     (setf (state o) :jumping))
+    ((not (on-ground-p o))
+     (setf (state o) :falling))
+    ((action-is o :ball)
+     (setf (state o) :ball))))
 
 (defmethod run-state ((o game-char) (s (eql :jumping)))
   (when (not (on-ground-p o))
@@ -155,18 +205,19 @@
     (setf (vx (b2-velocity-linear set-move))
           (* 1.5 (vx motion))))
 
-  (when (action-is o :stand)
-    (setf (state o) :falling))
+  (cond
+    ((action-is o :stand)
+     (setf (state o) :falling))
 
-  ;; If the player's jumping thta's allowed
-  (when (and (on-ground-p o)
-             (action-is o :jump))
-    (with-slots (jump-force) o
-      (setf (vy (b2-linear-impulse jump-force)) 4.0)))
+    ;; If the player's jumping thta's allowed
+    ((and (on-ground-p o)
+          (action-is o :jump))
+     (with-slots (jump-force) o
+       (setf (vy (b2-linear-impulse jump-force)) 4.0)))
 
-  ;; If we hit a wall
-  (when (side-hit o)
-    (setf (state o) :bounce)))
+    ;; If we hit a wall
+    ((side-hit o)
+     (setf (state o) :bounce))))
 
 
 (defmethod run-state ((o game-char) (s (eql :bounce)))
@@ -201,8 +252,8 @@
     (setf actions nil)))
 
 (defmethod draw ((gc game-char) lists m)
-  (with-slots (pos body sprite ballsprite) gc
-    (let ((spr (if (state-is gc :ball :bounce) ballsprite sprite)))
+  (with-slots (pos body sprite) gc
+    (let ((spr sprite))
       (setf (sprite-pos spr) pos)
       (nv2* (sprite-pos spr) *physics-scale*)
       (draw spr lists m))))
@@ -232,8 +283,3 @@
     (setf motion (or (akey motion-mask +motion-mask+)
                      +motion-none+))))
 
-(defun char-set-ball (gc ballp)
-  (with-slots (actions) gc
-    (if ballp
-        (push :ball actions)
-        (push :stand actions))))

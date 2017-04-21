@@ -64,10 +64,6 @@
     (gk:map-b2-collisions
      (lambda (c a b)
        (plus-c:c-val ((c gk.raw:gk-b2-contact-pair))
-         #++
-         (:say (c :contact) :br
-               "  " a (c :id-a) :br
-               "  " b (c :id-b))
          (if (> (c :contact) 0)
              (collide a b (c :id-a) (c :id-b))
              (separate a b (c :id-a) (c :id-b)))))

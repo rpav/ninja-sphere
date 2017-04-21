@@ -89,6 +89,11 @@ or manually.")
             do (when (remhash as animations)
                  (animation-stopped (slot-value as 'animation) as))))))
 
+(defun anim-reset (manager &rest anim-states)
+  (let ((*anim-manager* manager))
+    (apply 'anim-stop manager anim-states)
+    (apply 'anim-start manager anim-states)))
+
  ;; spritesheet-anim
 
 ;;; If this were all really proper we'd keep a ref to the spritesheet.
@@ -102,6 +107,10 @@ or manually.")
 (defmethod initialize-instance :after ((a anim-sprite) &key name &allow-other-keys)
   (with-slots (anim) a
     (setf anim (find-anim (asset-anims *assets*) name))))
+
+(defmethod (setf anim-sprite-anim) (v (a anim-sprite))
+  (with-slots (anim) a
+    (setf anim (find-anim (asset-anims *assets*) v))))
 
 (defmethod print-object ((a anim-sprite) s)
   (with-slots (anim) a

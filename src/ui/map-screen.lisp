@@ -85,18 +85,14 @@
               (case key
                 (:scancode-right (set-motion-bit char +motion-right+))
                 (:scancode-left (set-motion-bit char +motion-left+))
-                #++(:scancode-up (set-motion-bit char +motion-up+))
-                (:scancode-down (char-set-ball char t))
-                (:scancode-space (char-jump char))
-                #++(:scancode-z (entity-action char :btn1))
-                #++(:scancode-a (entity-action char :btn2))
-                #++(:scancode-x (entity-action char :btn3))
-                #++(:scancode-s (entity-action char :btn4))))
+                (:scancode-down (char-action char :ball))
+                (:scancode-z (char-action char :jump))
+                (:scancode-a (char-action char :attack))))
             (progn
               (case key
                 (:scancode-right (clear-motion-bit char +motion-right+))
                 (:scancode-left (clear-motion-bit char +motion-left+))
                 (:scancode-up (clear-motion-bit char +motion-up+))
-                (:scancode-down (char-set-ball char nil)))))
+                (:scancode-down (char-action char :stand)))))
         (when (and (eq state :keydown) (eql key :scancode-space))
           (setf go t)))))
