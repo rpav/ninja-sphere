@@ -75,7 +75,7 @@
       (setf (kit.sdl2:idle-render win) t)
 
       (with-game-state (win)
-        (setf screen (make-instance 'map-screen))))))
+        (map-change "untitled")))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))
   (with-slots (gk) w
@@ -141,20 +141,9 @@
 (defun (setf current-char) (v)
   (setf (game-window-char *window*) v))
 
-(defun map-change (map &optional target)
-  #++
-  (let ((char (current-char)))
-    (setf (current-map)
-          (make-instance 'game-map
-            :map (get-path "assets" "map" (string+ map ".json"))))
-    (multiple-value-bind (map-target props)
-        (map-find-start (current-map) target)
-      (setf (entity-pos char) map-target)
-      (setf (entity-motion char) +motion-none+)
-      (map-add (current-map) char)
-      (map-update (current-map))
-      (when-let (text (aval :text props))
-        (show-textbox text)))))
+(defun map-change (name)
+  (setf (current-screen)
+        (make-instance 'map-screen :name name)))
 
 (defun window-size ()
   (kit.sdl2:window-size *window*))

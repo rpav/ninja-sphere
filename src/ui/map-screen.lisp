@@ -11,7 +11,7 @@
    (scroll-cmd :initform nil)
    (bgscroll-cmd :initform (make-array 4))))
 
-(defmethod initialize-instance :after ((m map-screen) &key &allow-other-keys)
+(defmethod initialize-instance :after ((m map-screen) &key name &allow-other-keys)
   (with-slots (im gktm scroll scroll-cmd bgscroll bgscroll-cmd hud) m
     (with-bundle (b)
       (let* ((list (make-instance 'cmd-list :subsystem :config))
@@ -43,7 +43,7 @@
                                    :translate (gk-vec2 0 0)
                                    :out scroll)))
 
-    (let ((map (make-instance 'game-map :map "untitled")))
+    (let ((map (make-instance 'game-map :map name)))
       (setf (game-value :map) map)
       (setf (game-value :char) (game-map-char map)))
 

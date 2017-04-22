@@ -137,9 +137,7 @@
   (with-slots (bundle gk-list game-char objects dead-objects step) gm
     (when (< (vy (game-char-pos game-char)) 0.0)
       (if (deadp game-char)
-          (progn
-            (mark-removal game-char)
-            (:say "Do change stuff here"))
+          (map-change "untitled")
           (die game-char)))
     (gk:map-b2-collisions
      (lambda (c a b)

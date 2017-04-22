@@ -220,7 +220,7 @@
 (defmethod run-state ((o game-char) (s (eql :walking)))
   (with-slots (motion set-move sprite sprite-anims runp) o
     (setf (b2-velocity-linear set-move) motion)
-    (nv2* (b2-velocity-linear set-move) (if runp 2.0 1.5))
+    (nv2* (b2-velocity-linear set-move) (if runp 2.5 1.5))
 
     (let ((v (vx (b2-velocity-linear set-move))))
       (if (< v -0.1) (setf (char-facing o) :left))
@@ -249,7 +249,7 @@
 (defmethod run-state ((o game-char) (s (eql :ball)))
   (with-slots (motion set-move runp) o
     (setf (vx (b2-velocity-linear set-move))
-          (* (vx motion) (if runp 2.2 1.5))))
+          (* (vx motion) (if runp 3.0 1.5))))
 
   (cond
     ((action-is o :stand)
@@ -319,7 +319,7 @@
 
 (defmethod post-physics ((gc game-char) lists)
   (when (crushed-p gc)
-    (:say "CRUSHED!"))
+    (die gc))
   (with-slots (jump-force) gc
     (setf (vx (b2-linear-impulse jump-force)) 0.0
           (vy (b2-linear-impulse jump-force)) 0.0))
