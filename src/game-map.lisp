@@ -205,3 +205,8 @@
 (defun game-map-size (m)
   (with-slots (tilemap) m
     (tilemap-size tilemap)))
+
+
+(defun map-title (m)
+  (with-slots (tilemap) m
+    (tilemap-property tilemap :title)))

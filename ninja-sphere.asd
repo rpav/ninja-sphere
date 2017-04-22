@@ -37,7 +37,8 @@
      (:module #:ui-classes
       :pathname "ui"
       :components
-      ((:file "map-screen")))
+      ((:file "map-hud")
+       (:file "map-screen")))
 
      (:file "assets")
      (:file "window")))))

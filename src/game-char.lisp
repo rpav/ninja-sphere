@@ -20,7 +20,8 @@
 
    (facing :initform :right :reader char-facing)
    (motion :initform +motion-none+)
-   (motion-mask :initform 0)))
+   (motion-mask :initform 0)
+   (runp :initform nil)))
 
 (defmethod initialize-instance :after ((c game-char) &key world start &allow-other-keys)
   (with-slots (sprite sprite-anims
@@ -44,7 +45,8 @@
             :animation-list
             (list
              (list :idle "ninja/idle")
-             (list :walk "ninja/run")
+             (list :walk "ninja/run" :frame-length (/ 64.0 1000))
+             (list :run "ninja/run" :frame-length (/ 56.0 1000))
              (list :attack "ninja/attack"
                    :count 1
                    :frame-length (/ 64.0 1000)
@@ -145,7 +147,7 @@
 
 (defmethod change-state ((o game-char) (s (eql :jumping)) (from-state (eql :walking)))
   (with-slots (jump-force body) o
-    (setf (vy (b2-linear-impulse jump-force)) 4.0
+    (setf (vy (b2-linear-impulse jump-force)) 4.5
           (vx (b2-linear-impulse jump-force)) 0.0
           (b2-linear-impulse-point jump-force) (gk-vec2 0 0))
     (incf (vx (b2-linear-impulse-point jump-force)))))
@@ -206,16 +208,18 @@
      (setf (state o) :ball))))
 
 (defmethod run-state ((o game-char) (s (eql :walking)))
-  (with-slots (motion set-move sprite sprite-anims) o
+  (with-slots (motion set-move sprite sprite-anims runp) o
     (setf (b2-velocity-linear set-move) motion)
-    (nv2* (b2-velocity-linear set-move) 1.5)
+    (nv2* (b2-velocity-linear set-move) (if runp 2.0 1.5))
 
     (let ((v (vx (b2-velocity-linear set-move))))
       (if (< v -0.1) (setf (char-facing o) :left))
       (if (> v  0.1) (setf (char-facing o) :right))
 
       (if (> (abs v) 0.1)
-          (sprite-anim-set-play sprite-anims :walk)
+          (if runp
+              (sprite-anim-set-play sprite-anims :run)
+              (sprite-anim-set-play sprite-anims :walk))
           (sprite-anim-set-play sprite-anims :idle))))
 
   (cond
@@ -233,9 +237,9 @@
     (setf (state o) :falling)))
 
 (defmethod run-state ((o game-char) (s (eql :ball)))
-  (with-slots (motion set-move) o
+  (with-slots (motion set-move runp) o
     (setf (vx (b2-velocity-linear set-move))
-          (* 1.5 (vx motion))))
+          (* (vx motion) (if runp 2.2 1.5))))
 
   (cond
     ((action-is o :stand)
@@ -285,8 +289,14 @@
 
 (defmethod physics ((gc game-char) lists)
   (with-slots (jump-force body set-move
-               collide-count actions fix-update) gc
+               collide-count actions fix-update runp) gc
     (setf (b2-velocity-linear set-move) (b2-body-velocity body))
+
+    (if (action-is gc :run)
+        (setf runp t)
+        (when (action-is gc :slow)
+          (setf runp nil)))
+
     (do-state gc)
     (with-slots (phys-list) lists
       (when-let (action (action-is gc :ball :stand))

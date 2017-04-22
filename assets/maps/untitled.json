@@ -50,18 +50,6 @@
                  "width":16,
                  "x":928,
                  "y":208
-                }, 
-                {
-                 "gid":4,
-                 "height":16,
-                 "id":5,
-                 "name":"",
-                 "rotation":0,
-                 "type":"goal",
-                 "visible":true,
-                 "width":16,
-                 "x":128,
-                 "y":240
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -143,6 +131,14 @@
         }],
  "nextobjectid":11,
  "orientation":"orthogonal",
+ "properties":
+    {
+     "title":"Untitled..."
+    },
+ "propertytypes":
+    {
+     "title":"string"
+    },
  "renderorder":"right-up",
  "tileheight":16,
  "tilesets":[
