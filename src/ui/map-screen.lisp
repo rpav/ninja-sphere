@@ -2,7 +2,6 @@
 
 (defclass map-screen (screen)
   ((map :initform nil)
-   (go :initform nil)
    (char :initform nil)
    (charpos :initform (gk-vec2 0 0))
    (scroll :initform (gk-mat4))
@@ -49,14 +48,12 @@
     (setf char (game-map-char map))))
 
 (defmethod physics ((s map-screen) lists)
-  (with-slots (go map) s
-    (when go
-      (physics map lists))))
+  (with-slots (map) s
+    (physics map lists)))
 
 (defmethod post-physics ((s map-screen) lists)
-  (with-slots (go map char) s
-    (when go
-      (post-physics map lists))))
+  (with-slots (map char) s
+    (post-physics map lists)))
 
 (defmethod draw ((s map-screen) lists m)
   (with-slots (map im scroll scroll-cmd
@@ -69,7 +66,7 @@
           (let* ((v (abs (vx (tf-trs-translate scroll-cmd))))
                  (screen-x (+ (abs v) 512))
                  (cx (- screen-x (vx charpos)))
-                 (margin 384))
+                 (margin 300))
 
             (when (< cx margin)
               (incf (vx (tf-trs-translate scroll-cmd)) (- cx margin))
@@ -89,21 +86,18 @@
     (draw map lists scroll)))
 
 (defmethod key-event ((s map-screen) key state)
-  (with-slots (go map char) s
-    (if go
-        (if (eq state :keydown)
-            (progn
-              (case key
-                (:scancode-right (set-motion-bit char +motion-right+))
-                (:scancode-left (set-motion-bit char +motion-left+))
-                (:scancode-down (char-action char :ball))
-                (:scancode-z (char-action char :jump))
-                (:scancode-a (char-action char :attack))))
-            (progn
-              (case key
-                (:scancode-right (clear-motion-bit char +motion-right+))
-                (:scancode-left (clear-motion-bit char +motion-left+))
-                (:scancode-up (clear-motion-bit char +motion-up+))
-                (:scancode-down (char-action char :stand)))))
-        (when (and (eq state :keydown) (eql key :scancode-z))
-          (setf go t)))))
+  (with-slots (map char) s
+    (if (eq state :keydown)
+        (progn
+          (case key
+            (:scancode-right (set-motion-bit char +motion-right+))
+            (:scancode-left (set-motion-bit char +motion-left+))
+            (:scancode-down (char-action char :ball))
+            (:scancode-z (char-action char :jump))
+            (:scancode-a (char-action char :attack))))
+        (progn
+          (case key
+            (:scancode-right (clear-motion-bit char +motion-right+))
+            (:scancode-left (clear-motion-bit char +motion-left+))
+            (:scancode-up (clear-motion-bit char +motion-up+))
+            (:scancode-down (char-action char :stand)))))))

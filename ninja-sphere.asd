@@ -28,8 +28,8 @@
      (:file "tilemap")
      (:file "anim")
 
-     (:file "game-char")
      (:file "game-mob")
+     (:file "game-char")
      (:file "game-item")
      (:file "game-map")
 

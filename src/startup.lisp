@@ -14,6 +14,8 @@
 
 (defvar +motion-mask+)
 
+(defvar +anims+)
+
 ;;; Static startup initialization
 
 (defun static-startup ()
@@ -37,4 +39,17 @@
         `((,+motion-left+  . #b1000)
           (,+motion-right+ . #b0001)
           (,+motion-up+    . #b0100)
-          (,+motion-down+  . #b0010))))
+          (,+motion-down+  . #b0010)))
+
+  (setf +anims+
+        (alist-hash-table
+         (list
+          (cons "mc/pig"
+                `((:idle "mc/pig-idle" :frame-length ,(/ 360.0 1000))
+                  (:walk "mc/pig-walk")
+                  (:death "mc/pig-death")))
+          (cons "mc/orc"
+                `((:idle "mc/orc-idle")
+                  (:walk "mc/orc-walk")
+                  (:death "mc/orc-death"))))
+         :test 'equal)))

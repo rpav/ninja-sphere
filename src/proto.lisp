@@ -56,3 +56,10 @@ this and call COLLIDE again with (B A). ID-A and ID-B are fixture IDs.")
   (:documentation "Called when A separates from B.  Some things may reverse
 this and call SEPARATE again with (B A). ID-A and ID-B are fixture IDs.")
   (:method (a b id-a id-b)))
+
+(defgeneric item-remove-p (o))
+(defgeneric item-remove-cmd (o))
+
+(defgeneric remove-sprite-p (o)
+  (:documentation "On removal, remove sprite")
+  (:method (o) t))

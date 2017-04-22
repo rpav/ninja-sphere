@@ -11,6 +11,7 @@
    (map-start :initform nil)
 
    (objects :initform nil)
+   (dead-objects :initform nil)
    (bundle :initform (make-instance 'bundle))
    (gk-list :initform (make-instance 'cmd-list-b2))
 
@@ -32,9 +33,11 @@
     (setf step (cmd-b2-step world))
     (setf iter (cmd-b2-iter-bodies world))
 
-    (setf ddraw (gk:cmd-b2-draw-debug world (gk-vec2 512 288)
-                                      :translate (gk-vec2 (f* 0.5) (f* 0.5))
-                                      :scale (gk-vec2 (* *physics-scale* 0.5) (* 0.5 *physics-scale*))))
+    (let ((scale 1.0))
+     (setf ddraw (gk:cmd-b2-draw-debug world (gk-vec2 512 288)
+                                       :translate (gk-vec2 (f* 0.5) (f* 0.5))
+                                       :scale (gk-vec2 (* *physics-scale* scale)
+                                                       (* *physics-scale* scale)))))
 
     (game-map-build-physics gm)
 
@@ -77,6 +80,7 @@
                                                      (list
                                                       :begin
                                                       :rect (f* -1.5) (f* -100.0) (f* 1.0) 100.0
+                                                      :fixture-id 1.0
                                                       :fill))))
         (bundle-append bundle gk-list)
         (cmd-list-append gk-list world-create body-create fixture-create blockfix-create)
@@ -107,18 +111,30 @@
                                               :type type
                                               :world world
                                               :sprite-id (aval :gid o)
-                                              :pos (gk-vec2 x y))))
+                                              :pos (gk-vec2 x (1+ y)))))
                                (push object objects)))
-                           tilemap "Items"))))
+                           tilemap "Items")
+      (map-tilemap-objects (lambda (o)
+                             (let* ((type (aval :type o))
+                                    (x (/ (aval :x o) 16.0))
+                                    (y (/ (aval :y o) 16.0))
+                                    (object (make-instance 'game-mob
+                                              :sprite-name type
+                                              :world world
+                                              :start (gk-vec2 x (1+ y)))))
+                               (push object objects)))
+                           tilemap "Mobs"))))
 
 (defmethod physics ((gm game-map) lists)
-  (with-slots (game-char scroll step iter) gm
+  (with-slots (game-char objects scroll step iter) gm
     (physics game-char lists)
+    (loop for o in objects
+          do (physics o lists))
     (with-slots (phys-list) lists
       (cmd-list-append phys-list scroll step iter))))
 
 (defmethod post-physics ((gm game-map) lists)
-  (with-slots (bundle gk-list game-char objects step) gm
+  (with-slots (bundle gk-list game-char objects dead-objects step) gm
     (when (< (vy (game-char-pos game-char)) 0.0)
       (:say "Death by pit!"))
     (gk:map-b2-collisions
@@ -132,8 +148,11 @@
     (setf objects
           (delete-if (lambda (o)
                        (when (item-remove-p o)
-                         (cmd-list-append gk-list (item-remove-cmd o)))
-                       (item-remove-p o))
+                         (when-let (cmd (item-remove-cmd o))
+                           (cmd-list-append gk-list cmd))
+                         (unless (remove-sprite-p o)
+                           (push o dead-objects))
+                         t))
                      objects))
     (gk:process *gk* bundle)
     (cmd-list-clear gk-list)))
@@ -142,9 +161,21 @@
   (:method ((map game-map) object type)
     (:say "Unimplemented sensor: " type)))
 
+(defgeneric backwall-hit (map object)
+  (:method (map object)))
+
+;;; FIXME: This kinda sucks, should use channels so mobs can just pass
+;;; the wall
+(defmethod backwall-hit (map (object game-mob))
+  (mark-removal object))
+
 (defmethod collide ((a game-map) b id-a id-b)
   (if (< id-a +m-first-sensor+)
-      (collide b a id-b id-a)
+      (progn
+       (case id-a
+         (1 (backwall-hit a b)))
+
+       (collide b a id-b id-a))
       (when (= 0 id-b)
         (map-sensor a b id-a))))
 
@@ -153,11 +184,13 @@
     (separate b a id-b id-a)))
 
 (defmethod draw ((gm game-map) lists m)
-  (with-slots (gktm game-char objects ddraw pos) gm
+  (with-slots (gktm game-char objects dead-objects ddraw pos) gm
     (draw gktm lists m)
     (draw game-char lists m)
 
     (loop for o in objects
+          do (draw o lists m))
+    (loop for o in dead-objects
           do (draw o lists m))
 
     #++

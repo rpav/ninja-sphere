@@ -9,12 +9,16 @@
 
    (state :initform nil)
    (actions :initform nil)
-   (collide-count :initform (make-array 4 :element-type 'fixnum :initial-element 0))
+   (collide-count :initform (make-array 6 :element-type 'fixnum :initial-element 0))
    (fix-update :initform nil)
 
    (sprite :initform nil)
-   sprite-anims
+   (sprite-anims :initform nil)
 
+   (left-mobs :initform nil)
+   (right-mobs :initform nil)
+
+   (facing :initform :right :reader char-facing)
    (motion :initform +motion-none+)
    (motion-mask :initform 0)))
 
@@ -26,7 +30,7 @@
     (setf jump-force (cmd-b2-linear-impulse body (gk-vec2 0 0.0) (gk-vec2 *f* 0)))
     (setf set-move (cmd-b2-set-velocity body (gk-vec2 0 0) 0))
 
-    (setf fix-update (cmd-b2-fixture-update body 0 :elasticity 0.0))
+    (setf fix-update (cmd-b2-fixture-update body 0 :elasticity 0.0 :friction 0.0))
 
     (setf sprite (make-instance 'sprite
                    :sheet (asset-sheet *assets*)
@@ -70,7 +74,8 @@
               (list
                :begin
                :circle x y r
-               :friction 0.0
+               :friction 0.2
+               :density 60.0
                :fill
 
                :begin
@@ -87,7 +92,18 @@
                :begin
                :circle (+ x r) y tr
                :sensor :fixture-id 3.0
-               :fill))))
+               :fill
+
+               :begin
+               :circle (- x (* 2 r)) y (* 2 tr)
+               :sensor :fixture-id 4.0
+               :fill
+
+               :begin
+               :circle (+ x (* 2 r)) y (* 2 tr)
+               :sensor :fixture-id 5.0
+               :fill
+               ))))
       (bundle-append bundle list)
       (cmd-list-append list body-create fixture-create)
       (gk:process *gk* bundle))))
@@ -116,13 +132,23 @@
   (with-slots (actions) gc
     (push action actions)))
 
+(defmethod (setf char-facing) (v (gc game-char))
+  (with-slots (sprite facing) gc
+    (setf facing v)
+    (case v
+      (:left  (setf (sprite-scale sprite) (gk-vec3 -1.0 1.0 1.0)))
+      (:right (setf (sprite-scale sprite) (gk-vec3  1.0 1.0 1.0))))))
+
 (defmethod change-state ((o game-char) (s (eql :walking)) from-state)
   (with-slots (sprite-anims) o
     (sprite-anim-set-play sprite-anims :idle)))
 
 (defmethod change-state ((o game-char) (s (eql :jumping)) (from-state (eql :walking)))
-  (with-slots (jump-force) o
-    (setf (vy (b2-linear-impulse jump-force)) 4.0)))
+  (with-slots (jump-force body) o
+    (setf (vy (b2-linear-impulse jump-force)) 4.0
+          (vx (b2-linear-impulse jump-force)) 0.0
+          (b2-linear-impulse-point jump-force) (gk-vec2 0 0))
+    (incf (vx (b2-linear-impulse-point jump-force)))))
 
 (defmethod change-state ((o game-char) (s (eql :falling)) from-state)
   (with-slots (sprite-anims) o
@@ -131,12 +157,14 @@
 (defmethod change-state ((o game-char) (s (eql :ball)) from-state)
   (with-slots (fix-update sprite-anims sprite) o
     (setf (sprite-scale sprite) (gk-vec3 1.0 1.0 1.0))
-    (setf (b2-fixture-update-elasticity fix-update) 0.9)
+    (setf (b2-fixture-update-elasticity fix-update) 0.9
+          (b2-fixture-update-friction fix-update) 0.0)
     (sprite-anim-set-play sprite-anims :ball)))
 
 (defmethod change-state :before ((o game-char) to-state (from-state (eql :ball)))
   (with-slots (fix-update sprite-anims) o
-    (setf (b2-fixture-update-elasticity fix-update) 0.0)))
+    (setf (b2-fixture-update-elasticity fix-update) 0.0
+          (b2-fixture-update-friction fix-update) 0.2)))
 
 (defmethod change-state ((o game-char) (s (eql :bounce)) from-state)
   (with-slots (jump-force) o
@@ -147,7 +175,7 @@
 (defmethod change-state ((o game-char) (s (eql :bounce-fall)) from-state))
 
 (defmethod change-state ((o game-char) (s (eql :attack)) from-state)
-  (with-slots (sprite-anims set-move) o
+  (with-slots (sprite-anims set-move left-mobs right-mobs facing) o
     (sprite-anim-set-play sprite-anims :attack)
     (when (eql from-state :walking)
       (setf (vx (b2-velocity-linear set-move)) 0.0))))
@@ -159,18 +187,15 @@
 
 (defmethod run-state ((o game-char) (s (eql :falling)))
   (with-slots (body motion set-move sprite) o
-    (if (zerop (vx motion))
-        (if (plusp (vx (b2-velocity-linear set-move)))
-            (incf (vx (b2-velocity-linear set-move)) -0.1)
-            (incf (vx (b2-velocity-linear set-move)) 0.1))
-        (setf (vx (b2-velocity-linear set-move))
-              (clamp (+ (vx (b2-velocity-linear set-move))
-                        (* 0.7 (vx motion)))
-                     -1.5 1.5)))
+    (unless (zerop (vx motion))
+      (setf (vx (b2-velocity-linear set-move))
+            (clamp (+ (vx (b2-velocity-linear set-move))
+                      (* #++ 0.7 0.3 (vx motion)))
+                   -1.5 1.5)))
 
     (let ((v (vx (b2-velocity-linear set-move))))
-      (if (< v -0.1) (setf (sprite-scale sprite) (gk-vec3 -1.0 1.0 1.0)))
-      (if (> v  0.1) (setf (sprite-scale sprite) (gk-vec3  1.0 1.0 1.0)))))
+      (if (< v -0.1) (setf (char-facing o) :left))
+      (if (> v  0.1) (setf (char-facing o) :right))))
 
   (cond
     ((on-ground-p o)
@@ -186,8 +211,8 @@
     (nv2* (b2-velocity-linear set-move) 1.5)
 
     (let ((v (vx (b2-velocity-linear set-move))))
-      (if (< v -0.1) (setf (sprite-scale sprite) (gk-vec3 -1.0 1.0 1.0)))
-      (if (> v  0.1) (setf (sprite-scale sprite) (gk-vec3 1.0 1.0 1.0)))
+      (if (< v -0.1) (setf (char-facing o) :left))
+      (if (> v  0.1) (setf (char-facing o) :right))
 
       (if (> (abs v) 0.1)
           (sprite-anim-set-play sprite-anims :walk)
@@ -241,6 +266,15 @@
     ((side-hit o)
      (setf (state o) :bounce))))
 
+(defmethod run-state ((o game-char) (s (eql :attack)))
+  (with-slots (facing left-mobs collide-count right-mobs) o
+    (case facing
+      (:left
+       (mapcar (lambda (x) (attack-mob o x)) left-mobs)
+       (setf left-mobs nil))
+      (:right
+       (mapcar (lambda (x) (attack-mob o x)) right-mobs)
+       (setf right-mobs nil)))))
 
 ;;; FIXME: Pretty inefficient but we should only have a couple actions per frame
 (defun action-is (gc &rest actions)
@@ -251,7 +285,7 @@
 
 (defmethod physics ((gc game-char) lists)
   (with-slots (jump-force body set-move
-               actions fix-update) gc
+               collide-count actions fix-update) gc
     (setf (b2-velocity-linear set-move) (b2-body-velocity body))
     (do-state gc)
     (with-slots (phys-list) lists
@@ -278,11 +312,39 @@
 
 (defmethod collide ((a game-char) b id-a id-b)
   (with-slots (collide-count) a
-    (incf (aref collide-count id-a))))
+    (when (= 0 id-b)
+      (incf (aref collide-count id-a)))))
+
+(defmethod collide ((a game-mob) (b game-char) id-a id-b)
+  (collide b a id-b id-a))
+
+(defmethod separate ((a game-mob) (b game-char) id-a id-b)
+  (separate b a id-b id-a))
+
+(defmethod collide ((a game-char) (b game-mob) (id-a (eql 0)) id-b)
+  (:say "DEATH BY MOB!")
+  (call-next-method))
+
+(defmethod collide :before ((a game-char) (b game-mob) (id-a (eql 4)) id-b)
+  (with-slots (left-mobs) a
+    (push b left-mobs)))
+
+(defmethod collide :before ((a game-char) (b game-mob) (id-a (eql 5)) id-b)
+  (with-slots (right-mobs) a
+    (push b right-mobs)))
+
+(defmethod separate :before ((a game-char) (b game-mob) (id-a (eql 4)) id-b)
+  (with-slots (left-mobs collide-count) a
+    (deletef left-mobs b)))
+
+(defmethod separate :before ((a game-char) (b game-mob) (id-a (eql 5)) id-b)
+  (with-slots (right-mobs collide-count) a
+    (deletef right-mobs b)))
 
 (defmethod separate ((a game-char) b id-a id-b)
   (with-slots (collide-count) a
-    (decf (aref collide-count id-a))))
+    (when (= 0 id-b)
+      (decf (aref collide-count id-a)))))
 
 (defun set-motion-bit (e direction)
   (with-slots (motion-mask) e
@@ -306,3 +368,10 @@
     (set-vec2 pos16 pos)
     (nv2* pos16 *physics-scale*)
     pos16))
+
+
+(defun attack-mob (gc mob)
+  (declare (ignore gc))
+  (die mob))
+
+(defmethod die ((gc game-char)))

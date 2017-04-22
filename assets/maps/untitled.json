@@ -81,11 +81,23 @@
                  "id":8,
                  "name":"",
                  "rotation":0,
-                 "type":"",
+                 "type":"mc\/pig",
                  "visible":true,
                  "width":20,
                  "x":192,
                  "y":208
+                }, 
+                {
+                 "gid":267,
+                 "height":16,
+                 "id":10,
+                 "name":"",
+                 "rotation":0,
+                 "type":"mc\/pig",
+                 "visible":true,
+                 "width":20,
+                 "x":96,
+                 "y":272
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -129,7 +141,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":9,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-up",
  "tileheight":16,
