@@ -188,9 +188,10 @@
       (setf (vx (b2-velocity-linear set-move)) 0.0))))
 
 (defmethod change-state ((o game-char) (s (eql :die)) from-state)
-  (with-slots (sprite-anims jump-force) o
+  (with-slots (sprite-anims set-move jump-force) o
     (sprite-anim-set-play sprite-anims :die)
-    (setf (vy (b2-linear-impulse jump-force)) 4.0)))
+    (setf (vy (b2-linear-impulse jump-force)) 4.0
+          (vy (b2-velocity-linear set-move)) 0.0)))
 
 (defmethod run-state ((o game-char) (s null))
   (if (on-ground-p o)
