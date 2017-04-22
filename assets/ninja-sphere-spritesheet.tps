@@ -389,13 +389,24 @@
             <key type="filename">source/_STAGE/ninja/swim_3.png</key>
             <key type="filename">source/_STAGE/ninja/swim_4.png</key>
             <key type="filename">source/_STAGE/ninja/swim_5.png</key>
-            <key type="filename">source/_STAGE/ninja/x_0.png</key>
-            <key type="filename">source/_STAGE/ninja/x_1.png</key>
-            <key type="filename">source/_STAGE/ninja/x_2.png</key>
-            <key type="filename">source/_STAGE/ninja/x_3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.425,0.62069</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,7,20,15</rect>
+                <key>scale9Paddings</key>
+                <rect>10,7,20,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">source/_STAGE/ninja/crouch_0.png</key>
+            <key type="filename">source/_STAGE/ninja/surprise_0.png</key>
+            <key type="filename">source/_STAGE/ninja/victory_0.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>

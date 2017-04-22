@@ -136,7 +136,11 @@
 (defmethod post-physics ((gm game-map) lists)
   (with-slots (bundle gk-list game-char objects dead-objects step) gm
     (when (< (vy (game-char-pos game-char)) 0.0)
-      (:say "Death by pit!"))
+      (if (deadp game-char)
+          (progn
+            (mark-removal game-char)
+            (:say "Do change stuff here"))
+          (die game-char)))
     (gk:map-b2-collisions
      (lambda (c a b)
        (plus-c:c-val ((c gk.raw:gk-b2-contact-pair))

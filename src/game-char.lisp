@@ -21,12 +21,16 @@
    (facing :initform :right :reader char-facing)
    (motion :initform +motion-none+)
    (motion-mask :initform 0)
-   (runp :initform nil)))
+   (runp :initform nil)
+   (deadp :initform nil :accessor deadp)
+   (removep :initform nil :reader item-remove-p)
+   (remove-cmd :initform nil :reader item-remove-cmd)))
 
 (defmethod initialize-instance :after ((c game-char) &key world start &allow-other-keys)
-  (with-slots (sprite sprite-anims
+  (with-slots (sprite sprite-anims remove-cmd
                jump-force set-move body pos fix-update) c
     (setf body (make-b2-body c))
+    (setf remove-cmd (cmd-b2-body-destroy world body))
 
     (setf jump-force (cmd-b2-linear-impulse body (gk-vec2 0 0.0) (gk-vec2 *f* 0)))
     (setf set-move (cmd-b2-set-velocity body (gk-vec2 0 0) 0))
@@ -52,6 +56,7 @@
                    :frame-length (/ 64.0 1000)
                    :on-stop (lambda (s)
                               (on-stop c :attack s)))
+             (list :die "ninja/surprise")
              (list :ball "ninja-sphere/ninja-sphere"))))
 
     (sprite-anim-set-play sprite-anims :idle)
@@ -182,6 +187,11 @@
     (when (eql from-state :walking)
       (setf (vx (b2-velocity-linear set-move)) 0.0))))
 
+(defmethod change-state ((o game-char) (s (eql :die)) from-state)
+  (with-slots (sprite-anims jump-force) o
+    (sprite-anim-set-play sprite-anims :die)
+    (setf (vy (b2-linear-impulse jump-force)) 4.0)))
+
 (defmethod run-state ((o game-char) (s null))
   (if (on-ground-p o)
       (setf (state o) :walking)
@@ -289,8 +299,11 @@
 
 (defmethod physics ((gc game-char) lists)
   (with-slots (jump-force body set-move
-               collide-count actions fix-update runp) gc
+               collide-count actions fix-update runp deadp) gc
     (setf (b2-velocity-linear set-move) (b2-body-velocity body))
+
+    (when deadp
+      (do-char-death gc))
 
     (if (action-is gc :run)
         (setf runp t)
@@ -332,7 +345,7 @@
   (separate b a id-b id-a))
 
 (defmethod collide ((a game-char) (b game-mob) (id-a (eql 0)) id-b)
-  (:say "DEATH BY MOB!")
+  (die a)
   (call-next-method))
 
 (defmethod collide :before ((a game-char) (b game-mob) (id-a (eql 4)) id-b)
@@ -384,4 +397,23 @@
   (declare (ignore gc))
   (die mob))
 
-(defmethod die ((gc game-char)))
+(defun do-char-death (gc)
+  (with-slots (body sprite deadp) gc
+    (unless (state-is gc :die)
+      (let ((bundle (make-instance 'bundle))
+            (list (make-instance 'cmd-list-b2))
+            (fixup (cmd-b2-fixture-update body 0
+                                          :category 2 :mask #x0 :group 0)))
+        (bundle-append bundle list)
+        (cmd-list-append list fixup)
+        (gk:process *gk* bundle)
+        (setf (sprite-key sprite) 1000))
+      (setf (state gc) :die))))
+
+(defmethod die ((gc game-char))
+  (with-slots (deadp) gc
+    (setf deadp t)))
+
+(defmethod mark-removal ((gc game-char))
+  (with-slots (removep) gc
+    (setf removep t)))

@@ -103,8 +103,8 @@
                  (:scancode-right (set-motion-bit char +motion-right+))
                  (:scancode-left (set-motion-bit char +motion-left+))
                  (:scancode-down (char-action char :ball))
-                 (:scancode-z (char-action char :jump))
-                 (:scancode-a
+                 (:scancode-a (char-action char :jump))
+                 (:scancode-z
                   (char-action char :attack)
                   (char-action char :run))))
              (progn
@@ -113,6 +113,6 @@
                  (:scancode-left (clear-motion-bit char +motion-left+))
                  (:scancode-up (clear-motion-bit char +motion-up+))
                  (:scancode-down (char-action char :stand))
-                 (:scancode-a (char-action char :slow)))))
+                 (:scancode-z (char-action char :slow)))))
          (when (and (eq key :scancode-z) (eq state :keydown))
            (setf go t))))))
