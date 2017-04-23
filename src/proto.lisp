@@ -63,3 +63,8 @@ this and call SEPARATE again with (B A). ID-A and ID-B are fixture IDs.")
 (defgeneric remove-sprite-p (o)
   (:documentation "On removal, remove sprite")
   (:method (o) t))
+
+(defgeneric cleanup (o)
+  (:documentation "Clean up object. Called by e.g. MAP-CHANGE on the screen,
+and similar.  Clean up resources (e.g. box2d world) here.")
+  (:method (o)))

@@ -43,6 +43,15 @@
 
     (setf game-char (make-instance 'game-char :world world :start map-start))))
 
+(defmethod cleanup ((o game-map))
+  (with-slots (world) o
+    (let ((bundle (make-instance 'bundle))
+          (list (make-instance 'cmd-list-b2))
+          (world-destroy (cmd-b2-world-destroy world)))
+      (bundle-append bundle list)
+      (cmd-list-append list world-destroy)
+      (gk:process *gk* bundle))))
+
 (defvar +m-first-sensor+ 100.0)
 (defvar +m-death+ +m-first-sensor+)
 
@@ -108,7 +117,9 @@
                                     (x (/ (aval :x o) 16.0))
                                     (y (/ (aval :y o) 16.0))
                                     (object (make-instance 'game-item
+                                              :name (aval :name o)
                                               :type type
+                                              :properties (aval :properties o)
                                               :world world
                                               :sprite-id (aval :gid o)
                                               :pos (gk-vec2 x (1+ y)))))

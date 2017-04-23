@@ -50,6 +50,26 @@
                  "width":16,
                  "x":928,
                  "y":208
+                }, 
+                {
+                 "gid":4,
+                 "height":16,
+                 "id":11,
+                 "name":"test-2",
+                 "properties":
+                    {
+                     "test":"value"
+                    },
+                 "propertytypes":
+                    {
+                     "test":"string"
+                    },
+                 "rotation":0,
+                 "type":"goal",
+                 "visible":true,
+                 "width":16,
+                 "x":128,
+                 "y":240
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -129,7 +149,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":11,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "properties":
     {

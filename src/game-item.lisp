@@ -3,7 +3,9 @@
 (defclass game-item ()
   ((sprite :initform nil)
    (body :initform nil)
-   (type :initform nil :initarg :type)
+   (name :initform nil :initarg :name :reader game-item-name)
+   (type :initform nil :initarg :type :reader game-item-type)
+   (properties :initform nil :initarg :properties)
    (removep :initform nil :reader item-remove-p)
    (remove-body :initform nil :reader item-remove-cmd)))
 
@@ -41,6 +43,7 @@
 (defmethod collide ((g game-item) b id-a id-b)
   (with-slots (type remove-body) g
     (when (eql 0 id-b)
+      (on-collect (game-item-type g) b g)
       (mark-removal g))))
 
 (defmethod collide (a (b game-item) id-a id-b)
@@ -52,3 +55,19 @@
 
 (defmethod remove-body-p ((g game-item)) t)
 (defmethod remove-sprite-p ((g game-item)) t)
+
+(defgeneric on-collect (type actor item))
+
+(defmethod on-collect ((type (eql :goal)) actor item)
+  (goal actor)
+  (anim-play *anim-manager*
+             (animation-instance (make-instance 'anim-delay
+                                   :duration 1.0
+                                   :function (lambda (o)
+                                               (map-change (game-item-name o))))
+                                 item)))
+
+(defgeneric property (object name))
+(defmethod property ((o game-item) name)
+  (with-slots (properties) o
+    (aval name properties)))

@@ -28,7 +28,7 @@
         (loop for i from 0 below (length im)
               do (setf (aref im i)
                        (make-instance 'image
-                         :pos (gk-vec3 -512 -288 0)
+                         :pos (gk-vec3 (- -512 8) (- -288 8) 0)
                          :tex (image-create-id (aref cmds i))
                          :size (gk-vec3 (* 3 512) (* 3 288) 1.0)
                          :anchor (gk-vec2 0 0)
@@ -55,7 +55,7 @@
       (physics (game-value :map) lists))))
 
 (defmethod post-physics ((s map-screen) lists)
-  (with-slots (char go) s
+  (with-slots (go) s
     (when go
       (post-physics (game-value :map) lists))))
 
@@ -103,7 +103,7 @@
                  (:scancode-right (set-motion-bit char +motion-right+))
                  (:scancode-left (set-motion-bit char +motion-left+))
                  (:scancode-down (char-action char :ball))
-                 (:scancode-a (char-action char :jump))
+                 (:scancode-x (char-action char :jump))
                  (:scancode-z
                   (char-action char :attack)
                   (char-action char :run))))
@@ -116,3 +116,10 @@
                  (:scancode-z (char-action char :slow)))))
          (when (and (eq key :scancode-z) (eq state :keydown))
            (setf go t))))))
+
+(defmethod cleanup ((s map-screen))
+  (with-slots (go) s
+    (:say "cleanup map screen")
+    (setf (game-value :map) nil)
+    (setf (game-value :char) nil)
+    (setf go nil)))

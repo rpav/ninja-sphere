@@ -57,6 +57,7 @@
                    :on-stop (lambda (s)
                               (on-stop c :attack s)))
              (list :die "ninja/surprise")
+             (list :victory "ninja/victory")
              (list :ball "ninja-sphere/ninja-sphere"))))
 
     (sprite-anim-set-play sprite-anims :idle)
@@ -192,6 +193,14 @@
     (sprite-anim-set-play sprite-anims :die)
     (setf (vy (b2-linear-impulse jump-force)) 4.0
           (vy (b2-velocity-linear set-move)) 0.0)))
+
+(defmethod change-state ((o game-char) (s (eql :goal)) from-state)
+  (with-slots (sprite-anims) o
+    (sprite-anim-set-play sprite-anims :victory)))
+
+(defmethod run-state ((o game-char) (s (eql :goal)))
+  (with-slots (set-move) o
+    (setf (vx (b2-velocity-linear set-move)) 0.0)))
 
 (defmethod run-state ((o game-char) (s null))
   (if (on-ground-p o)
@@ -413,7 +422,11 @@
 
 (defmethod die ((gc game-char))
   (with-slots (deadp) gc
-    (setf deadp t)))
+    (unless (state-is gc :goal)
+      (setf deadp t))))
+
+(defmethod goal ((gc game-char))
+  (setf (state gc) :goal))
 
 (defmethod mark-removal ((gc game-char))
   (with-slots (removep) gc

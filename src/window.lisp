@@ -23,6 +23,7 @@
   (gk assets
    (map :initform nil :accessor game-window-map)
    (map-screen :initform nil :accessor game-window-map-screen)
+   (next-map :initform nil)
    (char :initform nil :accessor game-window-char)
    (game-state :initform (make-hash-table))
    (anim-manager :initform (make-instance 'anim-manager))
@@ -84,10 +85,13 @@
 (defmethod kit.sdl2:render ((w game-window))
   (gl:clear-color 0.0 0.0 0.0 1.0)
   (gl:clear :color-buffer-bit :stencil-buffer-bit)
-  (with-slots (gk assets physics-bundle render-bundle render-lists) w
-    (game-lists-clear render-lists)
+  (with-slots (gk assets physics-bundle render-bundle render-lists
+               next-map) w
     (with-game-state (w)
+      (when next-map (do-map-change next-map))
+
       (when-let (screen (current-screen))
+        (game-lists-clear render-lists)
         (physics screen render-lists)
         (gk:process gk physics-bundle)
         (post-physics screen render-lists)
@@ -95,6 +99,15 @@
         (anim-update *anim-manager*)
         (draw screen render-lists (asset-proj *assets*))
         (gk:process gk render-bundle)))))
+
+(defun do-map-change (name)
+  (let ((s (current-screen))
+        (map (game-value :map)))
+    (cleanup s)
+    (cleanup map)
+    (setf (current-screen)
+          (make-instance 'map-screen :name name))
+    (setf (slot-value *window* 'next-map) nil)))
 
 (defgeneric key-event (ob key state) (:method (ob key state)))
 
@@ -129,21 +142,9 @@
 (defun (setf current-screen) (v)
   (setf (game-window-screen *window*) v))
 
-(defun current-map ()
-  (and *window* (game-window-map *window*)))
-
-(defun (setf current-map) (v)
-  (setf (game-window-map *window*) v))
-
-(defun current-char ()
-  (and *window* (game-window-char *window*)))
-
-(defun (setf current-char) (v)
-  (setf (game-window-char *window*) v))
-
 (defun map-change (name)
-  (setf (current-screen)
-        (make-instance 'map-screen :name name)))
+  (with-slots (next-map) *window*
+    (setf next-map name)))
 
 (defun window-size ()
   (kit.sdl2:window-size *window*))

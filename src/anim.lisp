@@ -156,3 +156,17 @@ delta-time."))
                       (anim-delta-time s))))
         (funcall function object time))))
   (call-next-method))
+
+ ;; anim-delay
+
+(defclass anim-delay (animation-periodic)
+  ((function :initform nil :initarg :function))
+  (:documentation "Call `FUNCTION` after `DURATION"))
+
+(defmethod animation-update ((a anim-delay) s)
+  (with-slots (function) a
+    (with-slots (object) s
+      (let ((time (anim-normal-time s)))
+        (when (and (>= time 1.0) function)
+          (funcall function object)))))
+  (call-next-method))

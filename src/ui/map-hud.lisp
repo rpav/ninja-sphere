@@ -23,7 +23,7 @@
                   (cmd-text "Score" :x m :y line)
                   score-text
                   (cmd-text "Level" :x (+ m (* w 0.12)) :y line)
-                  (cmd-text title :x (+ m (* w 0.12)) :y (* 2 line))))))))
+                  (cmd-text (or title "?noname?") :x (+ m (* w 0.12)) :y (* 2 line))))))))
 
 (defmethod draw ((h map-hud) lists m)
   (with-slots (text-cmds text-style) h

@@ -1510,7 +1510,7 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":7,"y":9,"w":17,"h":17},
 	"sourceSize": {"w":40,"h":29},
-	"pivot": {"x":0.5,"y":0.5}
+	"pivot": {"x":0.425,"y":0.62069}
 },
 "nosprite.png":
 {
@@ -1528,6 +1528,6 @@
 	"format": "RGBA8888",
 	"size": {"w":127,"h":431},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c1818ca8f00e7b0698f9229ecae7492b:f88b63a37550772ef90d0393a56c9b8e:dec61b177df20816ca0aa94c3b98f528$"
+	"smartupdate": "$TexturePacker:SmartUpdate:2cb15788a9f84e888f93412f62c282c3:f88b63a37550772ef90d0393a56c9b8e:dec61b177df20816ca0aa94c3b98f528$"
 }
 }
