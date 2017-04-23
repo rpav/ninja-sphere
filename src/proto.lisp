@@ -64,6 +64,10 @@ this and call SEPARATE again with (B A). ID-A and ID-B are fixture IDs.")
   (:documentation "On removal, remove sprite")
   (:method (o) t))
 
+(defgeneric go-live (o)
+  (:documentation "Called as an object goes 'live' in play.")
+  (:method (o)))
+
 (defgeneric cleanup (o)
   (:documentation "Clean up object. Called by e.g. MAP-CHANGE on the screen,
 and similar.  Clean up resources (e.g. box2d world) here.")

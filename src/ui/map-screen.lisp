@@ -2,6 +2,7 @@
 
 (defclass map-screen (screen)
   ((go :initform nil)
+   (map :initform nil)
    (hud :initform nil)
    (charpos :initform (gk-vec2 0 0))
    (scroll :initform (gk-mat4))
@@ -12,7 +13,7 @@
    (bgscroll-cmd :initform (make-array 4))))
 
 (defmethod initialize-instance :after ((m map-screen) &key name &allow-other-keys)
-  (with-slots (im gktm scroll scroll-cmd bgscroll bgscroll-cmd hud) m
+  (with-slots (im gktm scroll scroll-cmd bgscroll bgscroll-cmd hud map) m
     (with-bundle (b)
       (let* ((list (make-instance 'cmd-list :subsystem :config))
              (cmds (make-array (length im))))
@@ -43,55 +44,56 @@
                                    :translate (gk-vec2 0 0)
                                    :out scroll)))
 
-    (let ((map (make-instance 'game-map :map name)))
-      (setf (game-value :map) map)
-      (setf (game-value :char) (game-map-char map)))
+    (setf map (make-instance 'game-map :map name))
+    (setf hud (make-instance 'map-hud :map map))))
 
-    (setf hud (make-instance 'map-hud))))
+(defmethod go-live ((o map-screen))
+  (with-slots (map hud) o
+    (go-live map)
+    (go-live hud)))
 
 (defmethod physics ((s map-screen) lists)
-  (with-slots (go) s
+  (with-slots (map go) s
     (when go
-      (physics (game-value :map) lists))))
+      (physics map lists))))
 
 (defmethod post-physics ((s map-screen) lists)
-  (with-slots (go) s
+  (with-slots (map go) s
     (when go
-      (post-physics (game-value :map) lists))))
+      (post-physics map lists))))
 
 (defmethod draw ((s map-screen) lists m)
-  (let ((map (game-value :map)))
-    (with-slots (im scroll scroll-cmd go hud
-                 bgscroll bgscroll-cmd delta) s
-      (when go
-        (with-slots (game-char) map
-          (let ((charpos (game-char-pos game-char))
-                (mapsize (game-map-size map)))
+  (with-slots (im scroll scroll-cmd go hud
+               map bgscroll bgscroll-cmd delta) s
+    (when go
+      (with-slots (game-char) map
+        (let ((charpos (game-char-pos game-char))
+              (mapsize (game-map-size map)))
 
-            (with-slots (pre-list) lists
-              (let* ((v (abs (vx (tf-trs-translate scroll-cmd))))
-                     (screen-x (+ (abs v) 512))
-                     (cx (- screen-x (vx charpos)))
-                     (margin 300)
-                     (sx (abs (vx (tf-trs-translate scroll-cmd)))))
+          (with-slots (pre-list) lists
+            (let* ((v (abs (vx (tf-trs-translate scroll-cmd))))
+                   (screen-x (+ (abs v) 512))
+                   (cx (- screen-x (vx charpos)))
+                   (margin 300)
+                   (sx (abs (vx (tf-trs-translate scroll-cmd)))))
 
-                (when (< cx margin)
-                  (incf (vx (tf-trs-translate scroll-cmd)) (- cx margin))
-                  (setf (vx (tf-trs-translate scroll-cmd))
-                        (clamp (vx (tf-trs-translate scroll-cmd)) (+ 512.0 (- (* 16.0 (vx mapsize)))) 0))
-                  (map-scroll map sx))
+              (when (< cx margin)
+                (incf (vx (tf-trs-translate scroll-cmd)) (- cx margin))
+                (setf (vx (tf-trs-translate scroll-cmd))
+                      (clamp (vx (tf-trs-translate scroll-cmd)) (+ 512.0 (- (* 16.0 (vx mapsize)))) 0))
+                (map-scroll map sx))
 
-                (cmd-list-append pre-list scroll-cmd)
+              (cmd-list-append pre-list scroll-cmd)
 
-                (loop for i from 0 below (length bgscroll-cmd)
-                      do (setf (vx (tf-trs-translate (aref bgscroll-cmd i))) (* 0.1 (1+ i) (- sx)))
-                         (cmd-list-append pre-list (aref bgscroll-cmd i))))))))
+              (loop for i from 0 below (length bgscroll-cmd)
+                    do (setf (vx (tf-trs-translate (aref bgscroll-cmd i))) (* 0.1 (1+ i) (- sx)))
+                       (cmd-list-append pre-list (aref bgscroll-cmd i))))))))
 
-      (loop for i from 0 below (length im)
-            do (draw (aref im i) lists (aref bgscroll i)))
+    (loop for i from 0 below (length im)
+          do (draw (aref im i) lists (aref bgscroll i)))
 
-      (draw map lists scroll)
-      (draw hud lists m))))
+    (draw map lists scroll)
+    (draw hud lists m)))
 
 (defmethod key-event ((s map-screen) key state)
   (let ((char (game-value :char)))
@@ -118,8 +120,6 @@
            (setf go t))))))
 
 (defmethod cleanup ((s map-screen))
-  (with-slots (go) s
-    (:say "cleanup map screen")
-    (setf (game-value :map) nil)
-    (setf (game-value :char) nil)
+  (with-slots (go map) s
+    (cleanup map)
     (setf go nil)))

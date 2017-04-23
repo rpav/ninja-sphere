@@ -422,7 +422,8 @@
 
 (defmethod die ((gc game-char))
   (with-slots (deadp) gc
-    (unless (state-is gc :goal)
+    (unless (or deadp (state-is gc :goal))
+      (decf (game-value :lives))
       (setf deadp t))))
 
 (defmethod goal ((gc game-char))

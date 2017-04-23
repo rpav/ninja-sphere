@@ -44,6 +44,11 @@
 
     (setf game-char (make-instance 'game-char :world world :start map-start))))
 
+(defmethod go-live ((o game-map))
+  (with-slots (game-char) o
+    (setf (game-value :map) o)
+    (setf (game-value :char) game-char)))
+
 (defmethod cleanup ((o game-map))
   (with-slots (world) o
     (let ((bundle (make-instance 'bundle))
@@ -51,7 +56,9 @@
           (world-destroy (cmd-b2-world-destroy world)))
       (bundle-append bundle list)
       (cmd-list-append list world-destroy)
-      (gk:process *gk* bundle))))
+      (gk:process *gk* bundle))
+    (setf (game-value :map) nil)
+    (setf (game-value :char) nil)))
 
 (defvar +m-first-sensor+ 100.0)
 (defvar +m-death+ +m-first-sensor+)

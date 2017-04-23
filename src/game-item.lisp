@@ -53,12 +53,19 @@
   (with-slots (removep) g
     (setf removep t)))
 
+(defgeneric property (object name))
+(defmethod property ((o game-item) name)
+  (with-slots (properties) o
+    (aval name properties)))
+
 (defmethod remove-body-p ((g game-item)) t)
 (defmethod remove-sprite-p ((g game-item)) t)
 
 (defgeneric on-collect (type actor item)
   (:method (type actor item)
     (:say "Collected " type " with no handler")))
+
+ ;; Item type handling
 
 (defmethod on-collect ((type (eql :goal)) actor item)
   (goal actor)
@@ -69,7 +76,7 @@
                                                (map-change (game-item-name o))))
                                  item)))
 
-(defgeneric property (object name))
-(defmethod property ((o game-item) name)
-  (with-slots (properties) o
-    (aval name properties)))
+
+(defmethod on-collect ((type (eql :points)) actor item)
+  (let ((points (property item :value)))
+    (incf (game-value :score) points)))

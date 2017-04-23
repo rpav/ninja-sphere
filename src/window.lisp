@@ -28,6 +28,7 @@
    (game-state :initform (make-hash-table))
    (anim-manager :initform (make-instance 'anim-manager))
    (screen :initform nil :accessor game-window-screen)
+   (next-screen :initform nil)
    (physics-bundle :initform (make-instance 'bundle))
    (render-bundle :initform (make-instance 'bundle))
    (render-lists :initform (make-instance 'game-lists))))
@@ -76,7 +77,8 @@
       (setf (kit.sdl2:idle-render win) t)
 
       (with-game-state (win)
-        (setf (game-value :score) 0)
+        (setf (game-value :score) 0
+              (game-value :lives) 3)
         (map-change "untitled")))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))
@@ -87,11 +89,15 @@
   (gl:clear-color 0.0 0.0 0.0 1.0)
   (gl:clear :color-buffer-bit :stencil-buffer-bit)
   (with-slots (gk assets physics-bundle render-bundle render-lists
-               next-map) w
+               next-screen screen) w
     (with-game-state (w)
-      (when next-map (do-map-change next-map))
+      (when next-screen
+        (when screen (cleanup screen))
+        (setf screen next-screen)
+        (setf next-screen nil)
+        (go-live screen))
 
-      (when-let (screen (current-screen))
+      (when screen
         (game-lists-clear render-lists)
         (physics screen render-lists)
         (gk:process gk physics-bundle)
@@ -100,15 +106,6 @@
         (anim-update *anim-manager*)
         (draw screen render-lists (asset-proj *assets*))
         (gk:process gk render-bundle)))))
-
-(defun do-map-change (name)
-  (let ((s (current-screen))
-        (map (game-value :map)))
-    (cleanup s)
-    (cleanup map)
-    (setf (current-screen)
-          (make-instance 'map-screen :name name))
-    (setf (slot-value *window* 'next-map) nil)))
 
 (defgeneric key-event (ob key state) (:method (ob key state)))
 
@@ -141,11 +138,11 @@
   (and *window* (game-window-screen *window*)))
 
 (defun (setf current-screen) (v)
-  (setf (game-window-screen *window*) v))
+  (with-slots (next-screen) *window*
+    (setf next-screen v)))
 
 (defun map-change (name)
-  (with-slots (next-map) *window*
-    (setf next-map name)))
+  (setf (current-screen) (make-instance 'map-screen :name name)))
 
 (defun window-size ()
   (kit.sdl2:window-size *window*))
