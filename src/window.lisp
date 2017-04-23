@@ -77,9 +77,7 @@
       (setf (kit.sdl2:idle-render win) t)
 
       (with-game-state (win)
-        (setf (game-value :score) 0
-              (game-value :lives) 3)
-        (map-change "untitled")))))
+        (game-init)))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))
   (with-slots (gk) w
@@ -87,10 +85,12 @@
 
 (defmethod kit.sdl2:render ((w game-window))
   (gl:clear-color 0.0 0.0 0.0 1.0)
-  (gl:clear :color-buffer-bit :stencil-buffer-bit)
+  (gl:clear :color-buffer-bit)
   (with-slots (gk assets physics-bundle render-bundle render-lists
                next-screen screen) w
     (with-game-state (w)
+      (game-lists-clear render-lists)
+
       (when next-screen
         (when screen (cleanup screen))
         (setf screen next-screen)
@@ -98,7 +98,6 @@
         (go-live screen))
 
       (when screen
-        (game-lists-clear render-lists)
         (physics screen render-lists)
         (gk:process gk physics-bundle)
         (post-physics screen render-lists)
@@ -160,3 +159,8 @@
 (defun (setf game-value) (v name)
   (with-slots (game-state) *window*
     (setf (gethash name game-state) v)))
+
+(defun game-init ()
+  (setf (game-value :score) 0
+        (game-value :lives) 3)
+  (setf (current-screen) (make-instance 'title-screen)))

@@ -156,7 +156,9 @@
   (with-slots (bundle gk-list game-char objects dead-objects step) gm
     (when (< (vy (game-char-pos game-char)) 0.0)
       (if (deadp game-char)
-          (map-change "untitled")
+          (if (>= (game-value :lives) 0)
+              (map-change "untitled")
+              (setf (current-screen) (make-instance 'game-over-screen)))
           (die game-char)))
     (gk:map-b2-collisions
      (lambda (c a b)

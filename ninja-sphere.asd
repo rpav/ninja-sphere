@@ -38,7 +38,9 @@
       :pathname "ui"
       :components
       ((:file "map-hud")
-       (:file "map-screen")))
+       (:file "map-screen")
+       (:file "game-over")
+       (:file "title")))
 
      (:file "assets")
      (:file "window")))))

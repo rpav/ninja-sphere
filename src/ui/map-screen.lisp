@@ -1,7 +1,7 @@
 (in-package :ninja-sphere)
 
 (defclass map-screen (screen)
-  ((go :initform nil)
+  ((go :initform t)
    (map :initform nil)
    (hud :initform nil)
    (charpos :initform (gk-vec2 0 0))
