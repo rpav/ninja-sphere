@@ -140,8 +140,10 @@
   (with-slots (next-screen) *window*
     (setf next-screen v)))
 
-(defun map-change (name &optional start)
-  (setf (current-screen) (make-instance 'map-screen :name name :start start)))
+(defun map-change (name &optional start with-level-screen)
+  (if with-level-screen
+      (setf (current-screen) (make-instance 'level-screen :name name :start start))
+      (setf (current-screen) (make-instance 'map-screen :name name :start start))))
 
 (defun window-size ()
   (kit.sdl2:window-size *window*))

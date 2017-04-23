@@ -40,6 +40,7 @@
       :pathname "ui"
       :components
       ((:file "map-hud")
+       (:file "level")
        (:file "map-screen")
        (:file "game-over")
        (:file "title")))

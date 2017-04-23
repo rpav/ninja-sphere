@@ -2,7 +2,7 @@
 
 (defclass game-map ()
   ((tilemap :initform nil)
-   (name :initform nil :initarg map)
+   (name :initform nil :initarg :name)
    (gktm :initform nil)
    (world :initform (gk:make-b2-world))
    (level-body :initform nil)
@@ -24,9 +24,9 @@
    (iter :initform nil)
    (ddraw :initform nil)))
 
-(defmethod initialize-instance :after ((gm game-map) &key map start &allow-other-keys)
+(defmethod initialize-instance :after ((gm game-map) &key start &allow-other-keys)
   (with-slots (tilemap name gktm world level-body block-body game-char ddraw scroll step iter map-starts) gm
-    (setf tilemap (load-tilemap (get-path "assets" "maps" (string+ map ".json"))
+    (setf tilemap (load-tilemap (get-path "assets" "maps" (string+ name ".json"))
                                 (asset-props *assets*)))
     (setf gktm (make-instance 'gk-tilemap :tilemap tilemap))
 
@@ -177,11 +177,15 @@
       (cmd-list-append phys-list scroll step iter))))
 
 (defmethod post-physics ((gm game-map) lists)
-  (with-slots (bundle gk-list game-char objects dead-objects step) gm
+  (with-slots (name bundle tilemap gk-list game-char objects dead-objects step) gm
     (when (< (vy (game-char-pos game-char)) 0.0)
       (if (deadp game-char)
           (if (>= (game-value :lives) 0)
-              (map-change "untitled")
+              (map-change (or (print (tilemap-property tilemap :restart-level))
+                              name)
+                          (or (print (tilemap-property tilemap :restart-start))
+                              "default")
+                          t)
               (setf (current-screen) (make-instance 'game-over-screen)))
           (die game-char gm)))
     (gk:map-b2-collisions

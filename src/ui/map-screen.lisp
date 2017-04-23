@@ -44,7 +44,7 @@
                                    :translate (gk-vec2 0 0)
                                    :out scroll)))
 
-    (setf map (make-instance 'game-map :map name :start start))
+    (setf map (make-instance 'game-map :name name :start start))
     (setf hud (make-instance 'map-hud :map map))))
 
 (defmethod go-live ((o map-screen) &key &allow-other-keys)

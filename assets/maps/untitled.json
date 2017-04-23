@@ -245,10 +245,14 @@
  "orientation":"orthogonal",
  "properties":
     {
+     "restart-level":"untitled",
+     "restart-start":"end",
      "title":"Untitled..."
     },
  "propertytypes":
     {
+     "restart-level":"string",
+     "restart-start":"string",
      "title":"string"
     },
  "renderorder":"right-up",

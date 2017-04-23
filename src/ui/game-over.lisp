@@ -25,5 +25,5 @@
       (cmd-list-append ui-list fstyle text))))
 
 (defmethod key-event ((s game-over-screen) key state)
-  (when (eq state :keydown)
+  (when (and (eq state :keydown) (eq key :scancode-z))
     (game-init)))
