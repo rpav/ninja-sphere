@@ -11,6 +11,7 @@
    (game-char :initform nil :reader game-map-char)
    (map-starts :initform (make-hash-table :test 'equal))
 
+   (mobs :initform nil)
    (objects :initform nil)
    (sense-objects :initform nil)
    (dead-objects :initform nil)
@@ -50,10 +51,11 @@
                                  (gethash "" map-starts)
                                  (error "No default start for map"))))))
 
-(defmethod go-live ((o game-map))
+(defmethod go-live ((o game-map) &key &allow-other-keys)
   (with-slots (game-char) o
     (setf (game-value :map) o)
-    (setf (game-value :char) game-char)))
+    (setf (game-value :char) game-char)
+    (map-scroll o 0)))
 
 (defmethod cleanup ((o game-map))
   (with-slots (world) o
@@ -68,7 +70,7 @@
 
 (defun game-map-build-physics (gm)
   (with-slots (tilemap world objects sense-objects bundle gk-list
-               level-body block-body map-starts) gm
+               level-body block-body map-starts mobs) gm
     (let* ((size (tilemap-size tilemap))
            (fixtures
              (list
@@ -161,8 +163,10 @@
                                               :sprite-name type
                                               :world world
                                               :start (gk-vec2 x (1+ y)))))
-                               (push object objects)))
-                           tilemap "Mobs"))))
+                               (push (cons x object) mobs)))
+                           tilemap "Mobs")
+      (setf mobs
+            (sort mobs (lambda (a b) (< (car a) (car b))))))))
 
 (defmethod physics ((gm game-map) lists)
   (with-slots (game-char objects scroll step iter) gm
@@ -236,8 +240,13 @@
 
 
 (defun map-scroll (gm amt)
-  (with-slots (scroll) gm
-    (setf (vx (b2-body-update-translate scroll)) (f* amt (/ 1.0 16.0)))))
+  (with-slots (scroll mobs objects world) gm
+    (setf (vx (b2-body-update-translate scroll)) (f* amt (/ 1.0 16.0)))
+    (let ((x (+ 32.0 (/ (* *physics-scale* (vx (b2-body-update-translate scroll))) 16.0))))
+      (loop while (and mobs (< (caar mobs) x))
+            do (let ((mob (cdr (pop mobs))))
+                 (go-live mob :world world)
+                 (push mob objects))))))
 
 (defun game-map-size (m)
   (with-slots (tilemap) m

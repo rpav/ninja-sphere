@@ -132,6 +132,18 @@
                  "width":20,
                  "x":96,
                  "y":272
+                }, 
+                {
+                 "gid":267,
+                 "height":16,
+                 "id":31,
+                 "name":"",
+                 "rotation":0,
+                 "type":"mc\/pig",
+                 "visible":true,
+                 "width":20,
+                 "x":512,
+                 "y":272
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -229,7 +241,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":31,
+ "nextobjectid":32,
  "orientation":"orthogonal",
  "properties":
     {

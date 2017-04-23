@@ -40,13 +40,15 @@
     (setf (b2-body-position body) start
           pos start)
 
-    (setf set-move (cmd-b2-set-velocity body (gk-vec2 -0.3 0) 0.0))
+    (setf set-move (cmd-b2-set-velocity body (gk-vec2 -0.3 0) 0.0))))
 
+(defmethod go-live ((o game-mob) &key world &allow-other-keys)
+  (with-slots (body pos) o
     (let* ((bundle (make-instance 'bundle))
            (list (make-instance 'cmd-list-b2))
            (bodydef (b2-bodydef body :dynamic
                                 :fixed-rotation-p t
-                                :position (gk-vec2 (f* (vx start)) (f* (vy start)))))
+                                :position (gk-vec2 (f* (vx pos)) (f* (vy pos)))))
            (body-create (cmd-b2-body-create world bodydef))
            (r (f* 0.3))
            (fixture-create

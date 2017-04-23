@@ -47,7 +47,7 @@
     (setf map (make-instance 'game-map :map name :start start))
     (setf hud (make-instance 'map-hud :map map))))
 
-(defmethod go-live ((o map-screen))
+(defmethod go-live ((o map-screen) &key &allow-other-keys)
   (with-slots (map hud) o
     (go-live map)
     (go-live hud)))
@@ -80,9 +80,9 @@
               (when (< cx margin)
                 (incf (vx (tf-trs-translate scroll-cmd)) (- cx margin))
                 (setf (vx (tf-trs-translate scroll-cmd))
-                      (clamp (vx (tf-trs-translate scroll-cmd)) (+ 512.0 (- (* 16.0 (vx mapsize)))) 0))
-                (map-scroll map sx))
+                      (clamp (vx (tf-trs-translate scroll-cmd)) (+ 512.0 (- (* 16.0 (vx mapsize)))) 0)))
 
+              (map-scroll map sx)
               (cmd-list-append pre-list scroll-cmd)
 
               (loop for i from 0 below (length bgscroll-cmd)

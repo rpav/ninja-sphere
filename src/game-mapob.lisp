@@ -53,11 +53,11 @@
 
 (defgeneric on-enter (type actor item)
   (:method (type actor item)
-    (:say "ON-ENTER " type " with no handler")))
+    #++(:say "ON-ENTER " type " with no handler")))
 
 (defgeneric on-leave (type actor item)
   (:method (type actor item)
-    (:say "ON-LEAVE " type " with no handler")))
+    #++(:say "ON-LEAVE " type " with no handler")))
 
  ;; Types
 
