@@ -175,7 +175,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":22,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "properties":
     {
@@ -198,7 +198,7 @@
         }, 
         {
          "firstgid":272,
-         "source":"tm\/food.json"
+         "source":"tm\/foodies.json"
         }],
  "tilewidth":16,
  "version":1,

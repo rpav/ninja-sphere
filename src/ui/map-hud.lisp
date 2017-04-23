@@ -29,8 +29,7 @@
     (with-slots (ui-list) lists
       (let ((score (game-value :score)))
         (unless (= score last-score)
-          (setf (cmd-text-string score-text
-                                 (format nil "~6,'0D" score))
+          (setf (cmd-text-string score-text) (format nil "~6,'0D" score)
                 last-score score))
         (cmd-list-append ui-list text-style)
         (apply 'cmd-list-append ui-list text-cmds)))))

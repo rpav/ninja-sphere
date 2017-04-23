@@ -9,11 +9,11 @@
    (removep :initform nil :reader item-remove-p)
    (remove-body :initform nil :reader item-remove-cmd)))
 
-(defmethod initialize-instance :after ((g game-item) &key world sprite-id pos &allow-other-keys)
+(defmethod initialize-instance :after ((g game-item) &key world sprite-name pos &allow-other-keys)
   (with-slots (sprite body remove-body) g
     (setf sprite (make-instance 'sprite
                    :sheet (asset-sheet *assets*)
-                   :index sprite-id
+                   :name sprite-name
                    :pos (gk-vec2 (* (vx pos) 16.0) (* (vy pos) 16.0))
                    :size (gk-vec2 1.0 1.0)))
     (setf body (make-b2-body g))

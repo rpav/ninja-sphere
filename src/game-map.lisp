@@ -114,7 +114,6 @@
                                         fixtures)))))
                            tilemap "Areas")
       (map-tilemap-objects (lambda (o)
-                             (:say o)
                              (let* ((type (make-keyword (string-upcase (aval :type (aval :properties o)))))
                                     (x (/ (aval :x o) 16.0))
                                     (y (/ (aval :y o) 16.0))
@@ -123,7 +122,7 @@
                                               :type type
                                               :properties (aval :properties o)
                                               :world world
-                                              :sprite-id (aval :gid o)
+                                              :sprite-name (tilemap-find-gid tilemap (aval :gid o))
                                               :pos (gk-vec2 x (1+ y)))))
                                (push object objects)))
                            tilemap "Items")

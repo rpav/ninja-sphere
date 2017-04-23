@@ -138,7 +138,7 @@
                      (append (aval :properties object)
                              (aval type extra-props))))
              (when (aval :gid object)
-               (setf (aval :gid object) (1- (aval :gid object))))
+               (setf (aval :gid object) (aval :gid object)))
              (when-let (name (aval :name object))
                (setf (gethash name names) object))
              (push object collected))
