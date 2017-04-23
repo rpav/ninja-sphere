@@ -12,7 +12,7 @@
    (scroll-cmd :initform nil)
    (bgscroll-cmd :initform (make-array 4))))
 
-(defmethod initialize-instance :after ((m map-screen) &key name &allow-other-keys)
+(defmethod initialize-instance :after ((m map-screen) &key name start &allow-other-keys)
   (with-slots (im gktm scroll scroll-cmd bgscroll bgscroll-cmd hud map) m
     (with-bundle (b)
       (let* ((list (make-instance 'cmd-list :subsystem :config))
@@ -44,7 +44,7 @@
                                    :translate (gk-vec2 0 0)
                                    :out scroll)))
 
-    (setf map (make-instance 'game-map :map name))
+    (setf map (make-instance 'game-map :map name :start start))
     (setf hud (make-instance 'map-hud :map map))))
 
 (defmethod go-live ((o map-screen))
@@ -105,6 +105,9 @@
                  (:scancode-right (set-motion-bit char +motion-right+))
                  (:scancode-left (set-motion-bit char +motion-left+))
                  (:scancode-down (char-action char :ball))
+                 (:scancode-up
+                  (when-let (name (game-value :door))
+                    (map-change name (game-value :start))))
                  (:scancode-x (char-action char :jump))
                  (:scancode-z
                   (char-action char :attack)
@@ -113,7 +116,6 @@
                (case key
                  (:scancode-right (clear-motion-bit char +motion-right+))
                  (:scancode-left (clear-motion-bit char +motion-left+))
-                 (:scancode-up (clear-motion-bit char +motion-up+))
                  (:scancode-down (char-action char :stand))
                  (:scancode-z (char-action char :slow)))))
          (when (and (eq key :scancode-z) (eq state :keydown))

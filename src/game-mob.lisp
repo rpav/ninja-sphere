@@ -25,7 +25,8 @@
                    :sheet (asset-sheet *assets*)
                    :name (string+ sprite-name "_idle_0.png")
                    :size (gk-vec2 -1 1)
-                   :pos (gk-vec2 (* 16.0 (vx start)) (* 16.0 (vy start))))
+                   :pos (gk-vec2 (* 16.0 (vx start)) (* 16.0 (vy start)))
+                   :key 3)
           sprite-anims (make-instance 'sprite-anim-set
                          :sprite sprite
                          :animation-list
@@ -80,7 +81,7 @@
   (with-slots (removep) g
     (setf removep t)))
 
-(defmethod die ((g game-mob))
+(defmethod die ((g game-mob) actor)
   (with-slots (sprite-anims deadp) g
     (setf deadp t)
     (sprite-anim-set-play sprite-anims :death)

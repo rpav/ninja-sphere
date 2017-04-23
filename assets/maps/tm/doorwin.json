@@ -1,0 +1,11 @@
+{ "columns":8,
+ "image":"..\/..\/source\/kenney_16x16\/doorwin.png",
+ "imageheight":64,
+ "imagewidth":128,
+ "margin":0,
+ "name":"doorwin",
+ "spacing":0,
+ "tilecount":32,
+ "tileheight":16,
+ "tilewidth":16
+}

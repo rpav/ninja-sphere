@@ -199,6 +199,38 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">source/_STAGE/doorwin/000.png</key>
+            <key type="filename">source/_STAGE/doorwin/001.png</key>
+            <key type="filename">source/_STAGE/doorwin/002.png</key>
+            <key type="filename">source/_STAGE/doorwin/003.png</key>
+            <key type="filename">source/_STAGE/doorwin/004.png</key>
+            <key type="filename">source/_STAGE/doorwin/005.png</key>
+            <key type="filename">source/_STAGE/doorwin/006.png</key>
+            <key type="filename">source/_STAGE/doorwin/007.png</key>
+            <key type="filename">source/_STAGE/doorwin/008.png</key>
+            <key type="filename">source/_STAGE/doorwin/009.png</key>
+            <key type="filename">source/_STAGE/doorwin/010.png</key>
+            <key type="filename">source/_STAGE/doorwin/011.png</key>
+            <key type="filename">source/_STAGE/doorwin/012.png</key>
+            <key type="filename">source/_STAGE/doorwin/013.png</key>
+            <key type="filename">source/_STAGE/doorwin/014.png</key>
+            <key type="filename">source/_STAGE/doorwin/015.png</key>
+            <key type="filename">source/_STAGE/doorwin/016.png</key>
+            <key type="filename">source/_STAGE/doorwin/017.png</key>
+            <key type="filename">source/_STAGE/doorwin/018.png</key>
+            <key type="filename">source/_STAGE/doorwin/019.png</key>
+            <key type="filename">source/_STAGE/doorwin/020.png</key>
+            <key type="filename">source/_STAGE/doorwin/021.png</key>
+            <key type="filename">source/_STAGE/doorwin/022.png</key>
+            <key type="filename">source/_STAGE/doorwin/023.png</key>
+            <key type="filename">source/_STAGE/doorwin/024.png</key>
+            <key type="filename">source/_STAGE/doorwin/025.png</key>
+            <key type="filename">source/_STAGE/doorwin/026.png</key>
+            <key type="filename">source/_STAGE/doorwin/027.png</key>
+            <key type="filename">source/_STAGE/doorwin/028.png</key>
+            <key type="filename">source/_STAGE/doorwin/029.png</key>
+            <key type="filename">source/_STAGE/doorwin/030.png</key>
+            <key type="filename">source/_STAGE/doorwin/031.png</key>
             <key type="filename">source/_STAGE/foodies/beans.png</key>
             <key type="filename">source/_STAGE/foodies/burger.png</key>
             <key type="filename">source/_STAGE/foodies/burrito.png</key>
@@ -437,6 +469,29 @@
                 <rect>10,7,20,15</rect>
                 <key>scale9Paddings</key>
                 <rect>10,7,20,15</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">source/_STAGE/numbers/numbers_000.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_001.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_002.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_003.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_004.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_005.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_006.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_007.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_008.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_009.png</key>
+            <key type="filename">source/_STAGE/numbers/numbers_010.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>2,2,4,4</rect>
+                <key>scale9Paddings</key>
+                <rect>2,2,4,4</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

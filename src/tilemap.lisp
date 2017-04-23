@@ -242,10 +242,11 @@
       (loop for i from 0 below layer-count
             do (map-tilemap-tiles
                 (lambda (tile x y key)
+                  (declare (ignorable key))
                   (when tile
                     (let ((sprite (make-instance 'sprite
                                     :sheet sheet
-                                    :key i
+                                    :key (* 2 i)
                                     :name tile
                                     :pos (gk-vec3 (* 16 x) (* 16 y) 0))))
                       (vector-push-extend sprite sprites))))

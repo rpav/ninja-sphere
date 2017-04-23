@@ -2,15 +2,17 @@
 
 (defclass game-map ()
   ((tilemap :initform nil)
+   (name :initform nil :initarg map)
    (gktm :initform nil)
    (world :initform (gk:make-b2-world))
    (level-body :initform nil)
    (block-body :initform nil)
 
    (game-char :initform nil :reader game-map-char)
-   (map-start :initform nil)
+   (map-starts :initform (make-hash-table :test 'equal))
 
    (objects :initform nil)
+   (sense-objects :initform nil)
    (dead-objects :initform nil)
    (bundle :initform (make-instance 'bundle))
    (gk-list :initform (make-instance 'cmd-list-b2))
@@ -21,8 +23,8 @@
    (iter :initform nil)
    (ddraw :initform nil)))
 
-(defmethod initialize-instance :after ((gm game-map) &key map &allow-other-keys)
-  (with-slots (tilemap gktm world level-body block-body game-char ddraw scroll step iter map-start) gm
+(defmethod initialize-instance :after ((gm game-map) &key map start &allow-other-keys)
+  (with-slots (tilemap name gktm world level-body block-body game-char ddraw scroll step iter map-starts) gm
     (setf tilemap (load-tilemap (get-path "assets" "maps" (string+ map ".json"))
                                 (asset-props *assets*)))
     (setf gktm (make-instance 'gk-tilemap :tilemap tilemap))
@@ -42,7 +44,11 @@
 
     (game-map-build-physics gm)
 
-    (setf game-char (make-instance 'game-char :world world :start map-start))))
+    (setf game-char (make-instance 'game-char
+                      :world world
+                      :start (or (gethash (or start "default") map-starts)
+                                 (gethash "" map-starts)
+                                 (error "No default start for map"))))))
 
 (defmethod go-live ((o game-map))
   (with-slots (game-char) o
@@ -60,15 +66,9 @@
     (setf (game-value :map) nil)
     (setf (game-value :char) nil)))
 
-(defvar +m-first-sensor+ 100.0)
-(defvar +m-death+ +m-first-sensor+)
-
-(defparameter *m-types*
-  `((:death . ,+m-death+)))
-
 (defun game-map-build-physics (gm)
-  (with-slots (tilemap world objects bundle gk-list
-               level-body block-body map-start) gm
+  (with-slots (tilemap world objects sense-objects bundle gk-list
+               level-body block-body map-starts) gm
     (let* ((size (tilemap-size tilemap))
            (fixtures
              (list
@@ -105,20 +105,26 @@
         (cmd-list-clear gk-list))
 
       (map-tilemap-objects (lambda (o)
-                             (let* ((type (make-keyword (string-upcase (aval :type o))))
-                                    (x (- (f* (aval :x o) ts) (f* 0.5)))
-                                    (y (- (f* (aval :y o) ts) (f* 0.5)))
+                             (let* ((type (make-keyword (string-upcase
+                                                         (or (aval :type (aval :properties o))
+                                                             (aval :type o)))))
+                                    (x (/ (aval :x o) 16.0))
+                                    (y (/ (aval :y o) 16.0))
                                     (w (f* (aval :width o) ts))
                                     (h (f* (aval :height o) ts)))
                                (case type
-                                 (:start (setf map-start (gk-vec2 (* ts (aval :x o))
-                                                                  (* ts (aval :y o)))))
+                                 (:start (setf (gethash (aval :name o) map-starts)
+                                               (gk-vec2 (* ts (aval :x o))
+                                                        (* ts (aval :y o)))))
                                  (otherwise
-                                  (push (list :begin
-                                              :rect x y w h
-                                              :sensor :fixture-id (aval type *m-types*)
-                                              :fill)
-                                        fixtures)))))
+                                  (push (make-instance 'game-senseob
+                                          :name (aval :name o)
+                                          :type type
+                                          :properties (aval :properties o)
+                                          :world world
+                                          :pos (gk-vec2 x y)
+                                          :size (gk-vec2 w h))
+                                        sense-objects)))))
                            tilemap "Areas")
       (map-tilemap-objects (lambda (o)
                              (let* ((type (make-keyword (string-upcase (aval :type (aval :properties o)))))
@@ -133,6 +139,20 @@
                                               :pos (gk-vec2 x (1+ y)))))
                                (push object objects)))
                            tilemap "Items")
+      (map-tilemap-objects (lambda (o)
+                             (let* ((type (make-keyword (string-upcase (or (aval :type (aval :properties o))
+                                                                           (aval :type o)))))
+                                    (x (/ (aval :x o) 16.0))
+                                    (y (/ (aval :y o) 16.0))
+                                    (object (make-instance 'game-sprob
+                                              :name (aval :name o)
+                                              :type type
+                                              :properties (aval :properties o)
+                                              :world world
+                                              :sprite-name (tilemap-find-gid tilemap (aval :gid o))
+                                              :pos (gk-vec2 x (1+ y)))))
+                               (push object objects)))
+                           tilemap "Objects")
       (map-tilemap-objects (lambda (o)
                              (let* ((type (aval :type o))
                                     (x (/ (aval :x o) 16.0))
@@ -159,7 +179,7 @@
           (if (>= (game-value :lives) 0)
               (map-change "untitled")
               (setf (current-screen) (make-instance 'game-over-screen)))
-          (die game-char)))
+          (die game-char gm)))
     (gk:map-b2-collisions
      (lambda (c a b)
        (plus-c:c-val ((c gk.raw:gk-b2-contact-pair))
@@ -193,18 +213,12 @@
   (mark-removal object))
 
 (defmethod collide ((a game-map) b id-a id-b)
-  (if (< id-a +m-first-sensor+)
-      (progn
-       (case id-a
-         (1 (backwall-hit a b)))
-
-       (collide b a id-b id-a))
-      (when (= 0 id-b)
-        (map-sensor a b id-a))))
+  (case id-a
+    (1 (backwall-hit a b)))
+  (collide b a id-b id-a))
 
 (defmethod separate ((a game-map) b id-a id-b)
-  (when (< id-a +m-first-sensor+)
-    (separate b a id-b id-a)))
+  (separate b a id-b id-a))
 
 (defmethod draw ((gm game-map) lists m)
   (with-slots (gktm game-char objects dead-objects ddraw pos) gm

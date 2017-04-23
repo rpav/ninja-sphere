@@ -30,6 +30,8 @@
 
      (:file "game-mob")
      (:file "game-char")
+     (:file "game-mapob")
+     (:file "game-sprob")
      (:file "game-item")
      (:file "game-map")
 

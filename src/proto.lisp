@@ -50,7 +50,10 @@
 (defgeneric collide (a b id-a id-b)
   (:documentation "Called when A collides with B.  Some things may reverse
 this and call COLLIDE again with (B A). ID-A and ID-B are fixture IDs.")
-  (:method (a b id-a id-b)))
+  (:method (a b id-a id-b))
+  (:method :around (a b id-a id-b)
+    #++(:say a id-a :br b id-b)
+    (call-next-method)))
 
 (defgeneric separate (a b id-a id-b)
   (:documentation "Called when A separates from B.  Some things may reverse
@@ -72,3 +75,7 @@ this and call SEPARATE again with (B A). ID-A and ID-B are fixture IDs.")
   (:documentation "Clean up object. Called by e.g. MAP-CHANGE on the screen,
 and similar.  Clean up resources (e.g. box2d world) here.")
   (:method (o)))
+
+(defgeneric die (o actor)
+  (:documentation "Called when something gets hit by ACTOR.")
+  (:method (o a)))

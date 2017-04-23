@@ -41,7 +41,8 @@
                    :sheet (asset-sheet *assets*)
                    :name "ninja/idle_1.png"
                    :pos (gk-vec2 16 16)
-                   :size (gk-vec2 1.0 1.0)))
+                   :size (gk-vec2 1.0 1.0)
+                   :key 1))
 
     (setf sprite-anims
           (make-instance 'sprite-anim-set
@@ -329,7 +330,7 @@
 
 (defmethod post-physics ((gc game-char) lists)
   (when (crushed-p gc)
-    (die gc))
+    (die gc gc))
   (with-slots (jump-force) gc
     (setf (vx (b2-linear-impulse jump-force)) 0.0
           (vy (b2-linear-impulse jump-force)) 0.0))
@@ -349,35 +350,35 @@
       (incf (aref collide-count id-a)))))
 
 (defmethod collide ((a game-mob) (b game-char) id-a id-b)
-  (collide b a id-b id-a))
-
-(defmethod separate ((a game-mob) (b game-char) id-a id-b)
-  (separate b a id-b id-a))
-
-(defmethod collide ((a game-char) (b game-mob) (id-a (eql 0)) id-b)
-  (die a)
+  (collide b a id-b id-a)
   (call-next-method))
 
-(defmethod collide :before ((a game-char) (b game-mob) (id-a (eql 4)) id-b)
-  (with-slots (left-mobs) a
-    (push b left-mobs)))
+(defmethod separate ((a game-mob) (b game-char) id-a id-b)
+  (separate b a id-b id-a)
+  (call-next-method))
 
-(defmethod collide :before ((a game-char) (b game-mob) (id-a (eql 5)) id-b)
-  (with-slots (right-mobs) a
-    (push b right-mobs)))
+(defmethod collide ((a game-char) (b game-mob) (id-a (eql 0)) id-b)
+  (die a b))
 
-(defmethod separate :before ((a game-char) (b game-mob) (id-a (eql 4)) id-b)
+(defmethod collide :before ((a game-char) b id-a id-b)
+  (with-slots (left-mobs right-mobs) a
+    (case id-a
+      (4 (push b left-mobs))
+      (5 (push b right-mobs)))))
+
+(defmethod separate :before ((a game-char) b (id-a (eql 4)) id-b)
   (with-slots (left-mobs collide-count) a
     (deletef left-mobs b)))
 
-(defmethod separate :before ((a game-char) (b game-mob) (id-a (eql 5)) id-b)
+(defmethod separate :before ((a game-char) b (id-a (eql 5)) id-b)
   (with-slots (right-mobs collide-count) a
     (deletef right-mobs b)))
 
 (defmethod separate ((a game-char) b id-a id-b)
   (with-slots (collide-count) a
     (when (= 0 id-b)
-      (decf (aref collide-count id-a)))))
+      (decf (aref collide-count id-a)))
+    (call-next-method)))
 
 (defun set-motion-bit (e direction)
   (with-slots (motion-mask) e
@@ -404,8 +405,7 @@
 
 
 (defun attack-mob (gc mob)
-  (declare (ignore gc))
-  (die mob))
+  (die mob gc))
 
 (defun do-char-death (gc)
   (with-slots (body sprite deadp) gc
@@ -420,7 +420,7 @@
         (setf (sprite-key sprite) 1000))
       (setf (state gc) :die))))
 
-(defmethod die ((gc game-char))
+(defmethod die ((gc game-char) actor)
   (with-slots (deadp) gc
     (unless (or deadp (state-is gc :goal))
       (decf (game-value :lives))

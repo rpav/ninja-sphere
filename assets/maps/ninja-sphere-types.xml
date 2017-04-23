@@ -7,4 +7,8 @@
  <objecttype name="goal" color="#0055ff">
   <property name="type" type="string" default="goal"/>
  </objecttype>
+ <objecttype name="door" color="#55aa00">
+  <property name="start" type="string" default="default"/>
+  <property name="type" type="string" default="door"/>
+ </objecttype>
 </objecttypes>
