@@ -42,6 +42,9 @@
   (or (parse-integer s :junk-allowed t)
       (make-keyword (string-upcase s))))
 
+(defun property-name-to-key (s)
+  (make-keyword (string-upcase s)))
+
 (defun load-tileset (path &key reload)
   (let ((oldset (gethash (namestring path) *tileset-cache*)))
     (if (or reload (not oldset))
@@ -116,22 +119,30 @@
    (objects :initform nil :reader object-layer-objects)
    (names :initform (make-hash-table :test 'equal))))
 
-(defun object-layer-parse (tm json)
+(defun object-layer-parse (tm json extra-props)
   (let* ((layer (make-instance 'object-layer
                   :props (aval :properties json)))
          (names (slot-value layer 'names))
          (objects (aval :objects json))
-         (size (tilemap-size tm)))
+         (size (tilemap-size tm))
+         (collected))
     (loop for object in objects
           as y-before = (aval :y object)
           do (setf (aval :y object) (- (* 16 (vy size))
                                        (+ (aval :height object)
                                           (aval :y object))))
+             (when-let (type (make-keyword (string-upcase (aval :type object))))
+               (unless (aval :properties object)
+                 (push (cons :properties nil) object))
+               (setf (aval :properties object)
+                     (append (aval :properties object)
+                             (aval type extra-props))))
              (when (aval :gid object)
                (setf (aval :gid object) (1- (aval :gid object))))
              (when-let (name (aval :name object))
-               (setf (gethash name names) object)))
-    (setf (slot-value layer 'objects) objects)
+               (setf (gethash name names) object))
+             (push object collected))
+    (setf (slot-value layer 'objects) collected)
     layer))
 
 (defclass tilemap ()
@@ -146,7 +157,7 @@
   (with-slots (layers) tm
     (setf layers (make-array layercount))))
 
-(defun load-tilemap (path)
+(defun load-tilemap (path &optional extra-props)
   (with-open-file (s path)
     (let* ((json:*json-identifier-name-to-lisp* #'identity)
            (json:*identifier-name-to-key* #'tilemap-name-to-key)
@@ -168,7 +179,7 @@
                      (aref (tilemap-layers tm) i)
                      (cond
                        ((aval :data layer) (tile-layer-parse layer))
-                       ((aval :objects layer) (object-layer-parse tm layer)))))
+                       ((aval :objects layer) (object-layer-parse tm layer extra-props)))))
       tm)))
 
 (defun tilemap-find-layer (tm name)
@@ -244,3 +255,32 @@
   (with-slots (sprites) gktm
     (loop for sprite across sprites
           do (draw sprite lists m))))
+
+ ;; Convert object type XML to JSON
+
+;;; Use this to regenerate ninja-sphere-types.json from the XML.  Requires XMLS.
+
+#++
+(progn
+  (defun parse-prop (v)
+    (let ((type (car (aval "type" v :test 'equal)))
+          (name (car (aval "name" v :test 'equal)))
+          (value (car (aval "default" v :test 'equal))))
+      (if (equal "string" type)
+          (if (equal "type" name)
+              (cons name (make-keyword (string-upcase value)))
+              (cons name value))
+          (cons name (read-from-string value)))))
+
+  (let ((s (read-file-into-string (get-path "assets" "maps" "ninja-sphere-types.xml"))))
+    (let ((source (xmls:parse s)))
+      (loop for v in (cddr source)
+            collect
+               (cons (car (aval "name" (cadr v) :test 'equal))
+                     (loop for p in (cddr v)
+                           collect (parse-prop (cadr p))))
+            into props
+            finally
+               (let ((json (json:encode-json-alist-to-string props)))
+                 (write-string-into-file json (get-path "assets" "maps" "ninja-sphere-types.json")
+                                         :if-exists :supersede))))))

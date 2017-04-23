@@ -16,11 +16,12 @@
    (proj :initform (gk-mat4) :reader asset-proj)
    (font :reader asset-font)
    (spritesheet :reader asset-sheet)
-   (anims :reader asset-anims)))
+   (anims :reader asset-anims)
+   (props :reader asset-props)))
 
 (defun load-assets (gk)
   (let ((pack (make-instance 'asset-pack)))
-    (with-slots (proj scroll font title spritesheet anims tm) pack
+    (with-slots (proj scroll font title spritesheet anims tm props) pack
       (with-bundle (b)
         (let* ((tmp (gk-mat4))
                (config (make-instance 'cmd-list :subsystem :config))
@@ -43,5 +44,10 @@
           (setf font (font-create-id load-font))
           #++(setf title (image-create-id load-title))
           (setf spritesheet (make-sheet load-sprites))
-          (setf anims (make-instance 'sheet-animations :sheet spritesheet)))))
+          (setf anims (make-instance 'sheet-animations :sheet spritesheet))
+
+          (let ((json:*json-identifier-name-to-lisp* #'identity)
+                (json:*identifier-name-to-key* #'property-name-to-key))
+            (with-open-file (s (get-path "assets" "maps" "ninja-sphere-types.json"))
+              (setf props (json:decode-json s)))))))
     pack))

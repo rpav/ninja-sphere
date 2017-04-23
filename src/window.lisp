@@ -76,6 +76,7 @@
       (setf (kit.sdl2:idle-render win) t)
 
       (with-game-state (win)
+        (setf (game-value :score) 0)
         (map-change "untitled")))))
 
 (defmethod kit.sdl2:close-window :before ((w game-window))

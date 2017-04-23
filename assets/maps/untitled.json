@@ -43,7 +43,7 @@
                  "gid":4,
                  "height":16,
                  "id":3,
-                 "name":"",
+                 "name":"test-2",
                  "rotation":0,
                  "type":"goal",
                  "visible":true,
@@ -52,24 +52,50 @@
                  "y":208
                 }, 
                 {
-                 "gid":4,
+                 "gid":278,
                  "height":16,
-                 "id":11,
-                 "name":"test-2",
+                 "id":19,
+                 "name":"",
+                 "rotation":0,
+                 "type":"10pt",
+                 "visible":true,
+                 "width":16,
+                 "x":176,
+                 "y":128
+                }, 
+                {
+                 "gid":278,
+                 "height":16,
+                 "id":20,
+                 "name":"",
                  "properties":
                     {
-                     "test":"value"
+                     "extra":"foo",
+                     "value":20
                     },
                  "propertytypes":
                     {
-                     "test":"string"
+                     "extra":"string",
+                     "value":"int"
                     },
                  "rotation":0,
-                 "type":"goal",
+                 "type":"10pt",
                  "visible":true,
                  "width":16,
-                 "x":128,
-                 "y":240
+                 "x":208,
+                 "y":128
+                }, 
+                {
+                 "gid":278,
+                 "height":16,
+                 "id":21,
+                 "name":"",
+                 "rotation":0,
+                 "type":"10pt",
+                 "visible":true,
+                 "width":16,
+                 "x":144,
+                 "y":128
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -149,7 +175,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":12,
+ "nextobjectid":22,
  "orientation":"orthogonal",
  "properties":
     {
@@ -169,6 +195,10 @@
         {
          "firstgid":257,
          "source":"tm\/mc.json"
+        }, 
+        {
+         "firstgid":272,
+         "source":"tm\/food.json"
         }],
  "tilewidth":16,
  "version":1,

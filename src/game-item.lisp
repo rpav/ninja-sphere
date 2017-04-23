@@ -56,7 +56,9 @@
 (defmethod remove-body-p ((g game-item)) t)
 (defmethod remove-sprite-p ((g game-item)) t)
 
-(defgeneric on-collect (type actor item))
+(defgeneric on-collect (type actor item)
+  (:method (type actor item)
+    (:say "Collected " type " with no handler")))
 
 (defmethod on-collect ((type (eql :goal)) actor item)
   (goal actor)

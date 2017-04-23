@@ -199,6 +199,30 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">source/_STAGE/foodies/beans.png</key>
+            <key type="filename">source/_STAGE/foodies/burger.png</key>
+            <key type="filename">source/_STAGE/foodies/burrito.png</key>
+            <key type="filename">source/_STAGE/foodies/cheesecake.png</key>
+            <key type="filename">source/_STAGE/foodies/chocolate bar.png</key>
+            <key type="filename">source/_STAGE/foodies/chocolate cake.png</key>
+            <key type="filename">source/_STAGE/foodies/cookies.png</key>
+            <key type="filename">source/_STAGE/foodies/coxinha.png</key>
+            <key type="filename">source/_STAGE/foodies/croissant.png</key>
+            <key type="filename">source/_STAGE/foodies/donut.png</key>
+            <key type="filename">source/_STAGE/foodies/egg.png</key>
+            <key type="filename">source/_STAGE/foodies/hotdog.png</key>
+            <key type="filename">source/_STAGE/foodies/ice cream.png</key>
+            <key type="filename">source/_STAGE/foodies/lamen.png</key>
+            <key type="filename">source/_STAGE/foodies/lasagna.png</key>
+            <key type="filename">source/_STAGE/foodies/lava cake.png</key>
+            <key type="filename">source/_STAGE/foodies/nacho.png</key>
+            <key type="filename">source/_STAGE/foodies/nigiri.png</key>
+            <key type="filename">source/_STAGE/foodies/onirigi.png</key>
+            <key type="filename">source/_STAGE/foodies/pizza.png</key>
+            <key type="filename">source/_STAGE/foodies/popsicle.png</key>
+            <key type="filename">source/_STAGE/foodies/pumpkin pie.png</key>
+            <key type="filename">source/_STAGE/foodies/strawberry cake.png</key>
+            <key type="filename">source/_STAGE/foodies/sushi.png</key>
             <key type="filename">source/_STAGE/goodly-1x/000.png</key>
             <key type="filename">source/_STAGE/goodly-1x/001.png</key>
             <key type="filename">source/_STAGE/goodly-1x/002.png</key>

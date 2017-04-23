@@ -23,7 +23,8 @@
 
 (defmethod initialize-instance :after ((gm game-map) &key map &allow-other-keys)
   (with-slots (tilemap gktm world level-body block-body game-char ddraw scroll step iter map-start) gm
-    (setf tilemap (load-tilemap (get-path "assets" "maps" (string+ map ".json"))))
+    (setf tilemap (load-tilemap (get-path "assets" "maps" (string+ map ".json"))
+                                (asset-props *assets*)))
     (setf gktm (make-instance 'gk-tilemap :tilemap tilemap))
 
     (setf level-body (make-b2-body gm))
@@ -113,7 +114,8 @@
                                         fixtures)))))
                            tilemap "Areas")
       (map-tilemap-objects (lambda (o)
-                             (let* ((type (make-keyword (string-upcase (aval :type o))))
+                             (:say o)
+                             (let* ((type (make-keyword (string-upcase (aval :type (aval :properties o)))))
                                     (x (/ (aval :x o) 16.0))
                                     (y (/ (aval :y o) 16.0))
                                     (object (make-instance 'game-item

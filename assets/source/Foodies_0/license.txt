@@ -1,0 +1,5 @@
+Author:  maruki
+License: CC0 (https://creativecommons.org/publicdomain/zero/1.0/)
+Source:  https://opengameart.org/content/16x16px-food-items
+
+Notes:   They were already named, split, and ready to use.  Nice!

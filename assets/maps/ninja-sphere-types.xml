@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="10pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="10"/>
+ </objecttype>
+ <objecttype name="goal" color="#0055ff">
+  <property name="type" type="string" default="goal"/>
+ </objecttype>
+</objecttypes>
