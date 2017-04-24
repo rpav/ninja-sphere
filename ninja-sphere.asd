@@ -43,6 +43,7 @@
        (:file "level")
        (:file "map-screen")
        (:file "game-over")
+       (:file "win")
        (:file "title")))
 
      (:file "assets")
