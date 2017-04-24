@@ -62,6 +62,16 @@
                :fixture-id 1.0
                :fill
 
+               :begin
+               :circle (- r) (f* -0.15) (/ r 2.0)
+               :sensor :fixture-id 2.0
+               :fill
+
+               :begin
+               :circle r (f* -0.15) (/ r 2.0)
+               :sensor :fixture-id 3.0
+               :fill
+
                ))))
       (bundle-append bundle list)
       (cmd-list-append list body-create fixture-create)
@@ -82,6 +92,18 @@
 (defmethod mark-removal ((g game-mob))
   (with-slots (removep) g
     (setf removep t)))
+
+(defmethod collide ((a game-mob) (b game-map) id-a id-b)
+  (with-slots (set-move) a
+    (let ((vx (vx (b2-linear-impulse set-move))))
+      (case id-a
+        (2 (when (< vx 0) (reverse-direction a)))
+        (3 (when (> vx 0) (reverse-direction a)))))))
+
+(defun reverse-direction (m)
+  (with-slots (set-move sprite) m
+      (setf (vx (b2-linear-impulse set-move)) (- (vx (b2-linear-impulse set-move)))
+            (vx (sprite-scale sprite)) (- (vx (sprite-scale sprite))))))
 
 (defmethod die ((g game-mob) actor)
   (with-slots (sprite-anims deadp) g
