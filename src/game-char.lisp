@@ -391,13 +391,11 @@
       (4 (push b left-mobs))
       (5 (push b right-mobs)))))
 
-(defmethod separate :before ((a game-char) b (id-a (eql 4)) id-b)
-  (with-slots (left-mobs collide-count) a
-    (deletef left-mobs b)))
-
-(defmethod separate :before ((a game-char) b (id-a (eql 5)) id-b)
-  (with-slots (right-mobs collide-count) a
-    (deletef right-mobs b)))
+(defmethod separate :before ((a game-char) b id-a id-b)
+  (with-slots (left-mobs right-mobs) a
+    (case id-a
+      (4 (deletef left-mobs b))
+      (5 (deletef right-mobs b)))))
 
 (defmethod separate ((a game-char) b id-a id-b)
   (with-slots (collide-count) a

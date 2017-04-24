@@ -10,7 +10,8 @@
                    :sheet (asset-sheet *assets*)
                    :name sprite-name
                    :pos (gk-vec2 (* (vx pos) 16.0) (* (vy pos) 16.0))
-                   :size (gk-vec2 1.0 1.0)))))
+                   :size (gk-vec2 1.0 1.0)
+                   :key 0))))
 
 (defmethod draw ((g game-sprob) lists m)
   (with-slots (sprite) g
@@ -30,11 +31,18 @@
 
  ;; type :hit-to-open
 
+(defmethod on-enter ((type (eql :hit-to-open)) actor item)
+  (setf (game-value :door) (game-item-name item))
+  (setf (game-value :start) (property item :start))
+  (setf (game-value :door-blocked) t))
+
+(defmethod on-leave ((type (eql :hit-to-open)) actor item)
+  (on-leave :door actor item))
+
 (defmethod on-hit ((type (eql :hit-to-open)) actor o)
   (with-slots (sprite properties state type) o
     (setf (sprite-index sprite)
           (find-frame (asset-sheet *assets*)
                       (property o :alt)))
-    (setf type :door)))
-
-
+    (setf type :door
+          (game-value :door-blocked) nil)))

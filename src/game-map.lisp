@@ -212,7 +212,7 @@
 
 (defgeneric map-sensor (map object type)
   (:method ((map game-map) object type)
-    (:say "Unimplemented sensor: " type)))
+    (format t "Unimplemented sensor: ~S~%" type)))
 
 (defgeneric backwall-hit (map object)
   (:method (map object)))

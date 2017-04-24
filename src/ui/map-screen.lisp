@@ -98,29 +98,30 @@
 
 (defmethod key-event ((s map-screen) key state)
   (let ((char (game-value :char)))
-   (with-slots (go) s
-     (if go
-         (if (eq state :keydown)
-             (progn
-               (case key
-                 (:scancode-right (set-motion-bit char +motion-right+))
-                 (:scancode-left (set-motion-bit char +motion-left+))
-                 (:scancode-down (char-action char :ball))
-                 (:scancode-up
-                  (when-let (name (game-value :door))
-                    (map-change name (game-value :start))))
-                 (:scancode-x (char-action char :jump))
-                 (:scancode-z
-                  (char-action char :attack)
-                  (char-action char :run))))
-             (progn
-               (case key
-                 (:scancode-right (clear-motion-bit char +motion-right+))
-                 (:scancode-left (clear-motion-bit char +motion-left+))
-                 (:scancode-down (char-action char :stand))
-                 (:scancode-z (char-action char :slow)))))
-         (when (and (eq key :scancode-z) (eq state :keydown))
-           (setf go t))))))
+    (with-slots (go) s
+      (if go
+          (if (eq state :keydown)
+              (progn
+                (case key
+                  (:scancode-right (set-motion-bit char +motion-right+))
+                  (:scancode-left (set-motion-bit char +motion-left+))
+                  (:scancode-down (char-action char :ball))
+                  (:scancode-up
+                   (when-let (name (game-value :door))
+                     (unless (game-value :door-blocked)
+                       (map-change name (game-value :start)))))
+                  (:scancode-x (char-action char :jump))
+                  (:scancode-z
+                   (char-action char :attack)
+                   (char-action char :run))))
+              (progn
+                (case key
+                  (:scancode-right (clear-motion-bit char +motion-right+))
+                  (:scancode-left (clear-motion-bit char +motion-left+))
+                  (:scancode-down (char-action char :stand))
+                  (:scancode-z (char-action char :slow)))))
+          (when (and (eq key :scancode-z) (eq state :keydown))
+            (setf go t))))))
 
 (defmethod cleanup ((s map-screen))
   (with-slots (go map) s

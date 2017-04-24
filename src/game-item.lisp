@@ -34,7 +34,7 @@
 
 (defgeneric on-collect (type actor item)
   (:method (type actor item)
-    (:say "Collected " type " with no handler")))
+    (format t "Collected ~S with no handler~%" type)))
 
  ;; Item type handling
 

@@ -68,4 +68,5 @@
 (defmethod on-leave ((type (eql :door)) actor item)
   (when (equal (game-item-name item)
                (game-value :door))
-    (setf (game-value :door) nil)))
+    (setf (game-value :door) nil
+          (game-value :door-blocked) nil)))

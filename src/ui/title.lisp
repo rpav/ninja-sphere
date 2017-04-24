@@ -37,4 +37,4 @@
 
 (defmethod key-event ((s title-screen) key state)
   (when (and (eq state :keydown) (eq key :scancode-z))
-    (map-change "L1" "default" t)))
+    (map-change *default-map* "default" t)))
