@@ -1,7 +1,9 @@
 (in-package :ninja-sphere)
 
 (defclass game-mob ()
-  ((sprite :initform nil)
+  ((properties :initform nil :initarg :properties)
+
+   (sprite :initform nil)
    (sprite-anims :initform nil)
    (pos :initform nil)
    (removep :initform nil :reader item-remove-p)
@@ -12,6 +14,10 @@
 
    (jump-force :initform nil)
    (set-move :initform nil)))
+
+(defmethod property ((o game-mob) name)
+  (with-slots (properties) o
+    (aval name properties)))
 
 (defmethod initialize-instance :after ((g game-mob)
                                        &key
@@ -93,7 +99,16 @@
   (with-slots (removep) g
     (setf removep t)))
 
-(defmethod collide ((a game-mob) (b game-map) id-a id-b)
+(defmethod collide ((a game-mob) (b game-mob) id-a id-b)
+  (when (/= (mob-direction a) (mob-direction b))
+    (reverse-direction b))
+  (reverse-direction a))
+
+(defun mob-direction (a)
+  (with-slots (set-move) a
+   (float-sign (vx (b2-linear-impulse set-move)))))
+
+(defun mob-bump (a id-a)
   (with-slots (set-move) a
     (let ((vx (vx (b2-linear-impulse set-move))))
       (case id-a
@@ -109,7 +124,9 @@
   (with-slots (sprite-anims deadp) g
     (setf deadp t)
     (sprite-anim-set-play sprite-anims :death)
-    (mark-removal g)))
+    (mark-removal g)
+    (when-let (val (property g :value))
+      (addscore val))))
 
 (defmethod remove-sprite-p ((g game-mob))
   (with-slots (deadp) g (not deadp)))

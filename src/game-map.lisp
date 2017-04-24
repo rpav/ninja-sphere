@@ -162,6 +162,7 @@
                                     (object (make-instance 'game-mob
                                               :sprite-name type
                                               :world world
+                                              :properties (aval :properties o)
                                               :start (gk-vec2 x (1+ y)))))
                                (push (cons x object) mobs)))
                            tilemap "Mobs")
@@ -224,6 +225,9 @@
   (case id-a
     (1 (backwall-hit a b)))
   (collide b a id-b id-a))
+
+(defmethod collide ((a game-mob) (b game-map) id-a id-b)
+  (mob-bump a id-a))
 
 (defmethod separate ((a game-map) b id-a id-b)
   (separate b a id-b id-a))

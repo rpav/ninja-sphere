@@ -166,3 +166,10 @@
   (setf (game-value :score) 0
         (game-value :lives) 3)
   (setf (current-screen) (make-instance 'title-screen)))
+
+(defun addscore (x)
+  (let ((last (game-value :score)))
+    (incf (game-value :score) x)
+    (when (> (floor (game-value :score) 1000)
+             (floor last 1000))
+      (incf (game-value :lives)))))

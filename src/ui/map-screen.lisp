@@ -75,7 +75,7 @@
             (let* ((v (abs (vx (tf-trs-translate scroll-cmd))))
                    (screen-x (+ (abs v) 512))
                    (cx (- screen-x (vx charpos)))
-                   (margin 300)
+                   (margin 200)
                    (sx (abs (vx (tf-trs-translate scroll-cmd)))))
 
               (when (< cx margin)

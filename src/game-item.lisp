@@ -50,4 +50,4 @@
 
 (defmethod on-collect ((type (eql :points)) actor item)
   (let ((points (property item :value)))
-    (incf (game-value :score) points)))
+    (addscore points)))
