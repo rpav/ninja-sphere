@@ -23,7 +23,7 @@
         (setf text-style (cmd-font-style :size fsize)
               score-text (cmd-text "000000" :x m :y (* 2 line))
               lives-text (cmd-text (format nil "x~D" (game-value :lives))
-                                   :x (+ m 155) :y (* 2 line))
+                                   :x (+ m (* fsize 6.5)) :y (* 2 line))
               text-fg (cmd-path (list
                                  :fill-color-rgba 255 255 255 255
                                  :tf-identity))
