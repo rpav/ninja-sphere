@@ -11,4 +11,24 @@
   <property name="start" type="string" default="default"/>
   <property name="type" type="string" default="door"/>
  </objecttype>
+ <objecttype name="25pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="25"/>
+ </objecttype>
+ <objecttype name="50pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="50"/>
+ </objecttype>
+ <objecttype name="100pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="100"/>
+ </objecttype>
+ <objecttype name="500pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="500"/>
+ </objecttype>
+ <objecttype name="1000pt" color="#aa5500">
+  <property name="type" type="string" default="points"/>
+  <property name="value" type="int" default="1000"/>
+ </objecttype>
 </objecttypes>

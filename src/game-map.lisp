@@ -260,3 +260,7 @@
 (defun map-title (m)
   (with-slots (tilemap) m
     (tilemap-property tilemap :title)))
+
+(defun map-bg (m)
+  (with-slots (tilemap) m
+    (tilemap-property tilemap :bg)))
