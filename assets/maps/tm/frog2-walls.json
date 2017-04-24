@@ -1,0 +1,11 @@
+{ "columns":20,
+ "image":"..\/..\/source\/old-frogatto-tiles2\/walls.png",
+ "imageheight":288,
+ "imagewidth":320,
+ "margin":0,
+ "name":"frog2-walls",
+ "spacing":0,
+ "tilecount":360,
+ "tileheight":16,
+ "tilewidth":16
+}

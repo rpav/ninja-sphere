@@ -3,9 +3,11 @@
 (defclass game-char ()
   ((jump-force :initform nil)
    (set-move :initform nil)
+   (thrust :initform nil)
    (body :initform nil)
    (pos :initform nil)
    (pos16 :initform (gk-vec2 0 0))
+   (last-vy :initform 0.0)
 
    (state :initform nil)
    (actions :initform nil)
@@ -27,13 +29,14 @@
    (remove-cmd :initform nil :reader item-remove-cmd)))
 
 (defmethod initialize-instance :after ((c game-char) &key world start &allow-other-keys)
-  (with-slots (sprite sprite-anims remove-cmd
+  (with-slots (sprite sprite-anims remove-cmd thrust
                jump-force set-move body pos fix-update) c
     (setf body (make-b2-body c))
     (setf remove-cmd (cmd-b2-body-destroy world body))
 
     (setf jump-force (cmd-b2-linear-impulse body (gk-vec2 0 0.0) (gk-vec2 *f* 0)))
     (setf set-move (cmd-b2-set-velocity body (gk-vec2 0 0) 0))
+    (setf thrust (cmd-b2-force body (gk-vec2 0 0) (gk-vec2 0 0)))
 
     (setf fix-update (cmd-b2-fixture-update body 0 :elasticity 0.0 :friction 0.0))
 
@@ -137,6 +140,10 @@
     (and (> (aref collide-count 2) 0)
          (> (aref collide-count 3) 0))))
 
+(defun downward-p (gc)
+  (with-slots (last-vy) gc
+    (< last-vy -0.1)))
+
 (defmethod char-action ((gc game-char) action)
   (with-slots (actions) gc
     (push action actions)))
@@ -190,10 +197,22 @@
       (setf (vx (b2-velocity-linear set-move)) 0.0))))
 
 (defmethod change-state ((o game-char) (s (eql :die)) from-state)
-  (with-slots (sprite-anims set-move jump-force) o
+  (with-slots (sprite-anims set-move jump-force thrust) o
     (sprite-anim-set-play sprite-anims :die)
+    (anim-play *anim-manager*
+               (animation-instance (make-instance 'anim-delay
+                                     :duration 0.2
+                                     :function (lambda (o)
+                                                 (setf (state o) :die-bounce)))
+                                   o))
+    (setf (vx (b2-velocity-linear set-move)) 0.0
+          (vy (b2-velocity-linear set-move)) 0.0
+          (vy (b2-force thrust)) 10.6)))
+
+(defmethod change-state ((o game-char) (s (eql :die-bounce)) from-state)
+  (with-slots (sprite-anims jump-force thrust) o
     (setf (vy (b2-linear-impulse jump-force)) 4.0
-          (vy (b2-velocity-linear set-move)) 0.0)))
+          (vy (b2-force thrust)) 0.0)))
 
 (defmethod change-state ((o game-char) (s (eql :goal)) from-state)
   (with-slots (sprite-anims) o
@@ -309,9 +328,10 @@
                (return found)))))
 
 (defmethod physics ((gc game-char) lists)
-  (with-slots (jump-force body set-move
+  (with-slots (jump-force body set-move thrust last-vy
                collide-count actions fix-update runp deadp) gc
     (setf (b2-velocity-linear set-move) (b2-body-velocity body))
+    (setf last-vy (vy (b2-velocity-linear body)))
 
     (when deadp
       (do-char-death gc))
@@ -325,8 +345,7 @@
     (with-slots (phys-list) lists
       (when-let (action (action-is gc :ball :stand))
         (cmd-list-append phys-list fix-update))
-      (cmd-list-append phys-list set-move)
-      (cmd-list-append phys-list jump-force))))
+      (cmd-list-append phys-list set-move thrust jump-force))))
 
 (defmethod post-physics ((gc game-char) lists)
   (when (crushed-p gc)
@@ -358,7 +377,13 @@
   (call-next-method))
 
 (defmethod collide ((a game-char) (b game-mob) (id-a (eql 0)) id-b)
-  (die a b))
+  (when (= 1 id-b)
+   (die a b))
+  #++
+  (if (and (state-is a :ball :bounce)
+           (downward-p a))
+      (attack-mob a b)
+      (die a b)))
 
 (defmethod collide :before ((a game-char) b id-a id-b)
   (with-slots (left-mobs right-mobs) a
@@ -408,8 +433,8 @@
   (die mob gc))
 
 (defun do-char-death (gc)
-  (with-slots (body sprite deadp) gc
-    (unless (state-is gc :die)
+  (with-slots (body sprite deadp set-move) gc
+    (unless (state-is gc :die :die-bounce)
       (let ((bundle (make-instance 'bundle))
             (list (make-instance 'cmd-list-b2))
             (fixup (cmd-b2-fixture-update body 0

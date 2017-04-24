@@ -1,0 +1,11 @@
+{ "columns":16,
+ "image":"..\/..\/source\/old-frogatto-tiles2\/decorations-foreground.png",
+ "imageheight":256,
+ "imagewidth":256,
+ "margin":0,
+ "name":"frog2-fg",
+ "spacing":0,
+ "tilecount":256,
+ "tileheight":16,
+ "tilewidth":16
+}

@@ -46,7 +46,8 @@
     (setf (b2-body-position body) start
           pos start)
 
-    (setf set-move (cmd-b2-set-velocity body (gk-vec2 -0.3 0) 0.0))))
+    (setf set-move (cmd-b2-set-velocity body (gk-vec2 -0.3 0) 0.0))
+    (setf jump-force (cmd-b2-linear-impulse body (gk-vec2 0 0.0) (gk-vec2 0.0 0)))))
 
 (defmethod go-live ((o game-mob) &key world &allow-other-keys)
   (with-slots (body pos) o
@@ -90,10 +91,14 @@
     (draw sprite lists m)))
 
 (defmethod physics ((g game-mob) lists)
-  (with-slots (set-move body) g
+  (with-slots (set-move body deadp) g
     (with-slots (phys-list) lists
-      (setf (vy (b2-linear-impulse set-move)) (vy (b2-body-velocity body)))
-      (cmd-list-append phys-list set-move))))
+      (if (not deadp)
+          (progn
+            (setf (vy (b2-linear-impulse set-move)) (vy (b2-body-velocity body)))
+            (cmd-list-append phys-list set-move))
+          (when (< (vy (b2-body-position body)) -1.0)
+            (mark-removal g))))))
 
 (defmethod mark-removal ((g game-mob))
   (with-slots (removep) g
@@ -121,12 +126,24 @@
             (vx (sprite-scale sprite)) (- (vx (sprite-scale sprite))))))
 
 (defmethod die ((g game-mob) actor)
-  (with-slots (sprite-anims deadp) g
-    (setf deadp t)
-    (sprite-anim-set-play sprite-anims :death)
-    (mark-removal g)
-    (when-let (val (property g :value))
-      (addscore val))))
+  (with-slots (sprite sprite-anims deadp set-move jump-force body) g
+    (unless deadp
+      (setf deadp t)
+      (sprite-anim-set-play sprite-anims :death)
 
-(defmethod remove-sprite-p ((g game-mob))
-  (with-slots (deadp) g (not deadp)))
+      (setf (vx (b2-velocity-linear set-move)) 0.0
+            (vy (b2-linear-impulse jump-force)) 15.0)
+
+      (with-bundle (b)
+        (let ((list (make-instance 'cmd-list-b2))
+              (fixup (cmd-b2-fixture-update body 1 :category 2 :mask #x0 :group 0)))
+          (bundle-append b list)
+          (cmd-list-append list fixup set-move jump-force)
+          (gk:process *gk* b)
+          (setf (sprite-key sprite) 1000)))
+
+      #++(mark-removal g)
+      (when-let (val (property g :value))
+        (addscore val)))))
+
+(defmethod remove-sprite-p ((g game-mob)) t)
