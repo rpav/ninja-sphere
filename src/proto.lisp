@@ -1,6 +1,6 @@
 (in-package :ninja-sphere)
 
-(defparameter *default-map* "L2")
+(defparameter *default-map* "L1")
 
 (defvar *gk* nil
   "Global GK context")
