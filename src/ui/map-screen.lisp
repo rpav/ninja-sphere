@@ -103,10 +103,10 @@
           (if (eq state :keydown)
               (progn
                 (case key
-                  (:scancode-right (set-motion-bit char +motion-right+))
-                  (:scancode-left (set-motion-bit char +motion-left+))
-                  (:scancode-down (char-action char :ball))
-                  (:scancode-up
+                  ((:scancode-l :scancode-right) (set-motion-bit char +motion-right+))
+                  ((:scancode-j :scancode-left) (set-motion-bit char +motion-left+))
+                  ((:scancode-k :scancode-down) (char-action char :ball))
+                  ((:scancode-i :scancode-up)
                    (when-let (name (game-value :door))
                      (unless (game-value :door-blocked)
                        (map-change name (game-value :start)))))
@@ -116,9 +116,9 @@
                    (char-action char :run))))
               (progn
                 (case key
-                  (:scancode-right (clear-motion-bit char +motion-right+))
-                  (:scancode-left (clear-motion-bit char +motion-left+))
-                  (:scancode-down (char-action char :stand))
+                  ((:scancode-l :scancode-right) (clear-motion-bit char +motion-right+))
+                  ((:scancode-j :scancode-left) (clear-motion-bit char +motion-left+))
+                  ((:scancode-k :scancode-down) (char-action char :stand))
                   (:scancode-z (char-action char :slow)))))
           (when (and (eq key :scancode-z) (eq state :keydown))
             (setf go t))))))
